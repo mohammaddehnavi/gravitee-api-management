@@ -38,7 +38,6 @@ import io.gravitee.rest.api.service.converter.ApiConverter;
 import io.gravitee.rest.api.service.exceptions.ApiNotDeployableException;
 import io.gravitee.rest.api.service.exceptions.ApiNotFoundException;
 import io.gravitee.rest.api.service.exceptions.TechnicalManagementException;
-import io.gravitee.rest.api.service.processor.SynchronizationService;
 import io.gravitee.rest.api.service.search.SearchEngineService;
 import io.gravitee.rest.api.service.v4.*;
 import io.gravitee.rest.api.service.v4.PlanService;
@@ -116,12 +115,6 @@ public class ApiStateServiceImpl_DeployTest {
     @InjectMocks
     private ApiConverter apiConverter = Mockito.spy(new ApiConverter());
 
-    @Mock
-    private PlanSearchService planSearchService;
-
-    @InjectMocks
-    private SynchronizationService synchronizationService = Mockito.spy(new SynchronizationService(this.objectMapper));
-
     private Api api;
     private Api updatedApi;
     private ApiStateService apiStateService;
@@ -166,10 +159,7 @@ public class ApiStateServiceImpl_DeployTest {
                 eventLatestRepository,
                 objectMapper,
                 apiMetadataService,
-                apiValidationService,
-                planSearchService,
-                apiConverter,
-                synchronizationService
+                apiValidationService
             );
         reset(searchEngineService);
         UserEntity admin = new UserEntity();

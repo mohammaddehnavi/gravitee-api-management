@@ -41,7 +41,6 @@ import io.gravitee.rest.api.service.*;
 import io.gravitee.rest.api.service.common.GraviteeContext;
 import io.gravitee.rest.api.service.converter.ApiConverter;
 import io.gravitee.rest.api.service.jackson.filter.ApiPermissionFilter;
-import io.gravitee.rest.api.service.processor.SynchronizationService;
 import io.gravitee.rest.api.service.search.SearchEngineService;
 import io.gravitee.rest.api.service.v4.*;
 import io.gravitee.rest.api.service.v4.PlanService;
@@ -56,9 +55,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -124,9 +121,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
     @Mock
     private PlanSearchService planSearchService;
 
-    @InjectMocks
-    private SynchronizationService synchronizationService = Mockito.spy(new SynchronizationService(this.objectMapper));
-
     private ApiStateService apiStateService;
 
     @AfterClass
@@ -174,10 +168,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eventLatestRepository,
                 objectMapper,
                 apiMetadataService,
-                apiValidationService,
-                planSearchService,
-                apiConverter,
-                synchronizationService
+                apiValidationService
             );
         reset(searchEngineService);
     }
@@ -207,7 +198,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
         )
             .thenReturn(new Page<>(singletonList(eventEntity), 0, 1, 1));
 
-        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity);
+        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity.getId());
 
         assertThat(isSynchronized).isTrue();
 
@@ -222,7 +213,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eq(1),
                 any()
             );
-        verify(synchronizationService, times(1)).checkSynchronization(any(), any(), any());
     }
 
     @Test
@@ -259,7 +249,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
         when(apiConverter.toApiEntity(eq(GraviteeContext.getExecutionContext()), any(), eq(null), eq(null), eq(false)))
             .thenReturn(apiEntity);
 
-        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity);
+        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity.getId());
 
         assertThat(isSynchronized).isTrue();
 
@@ -274,7 +264,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eq(1),
                 any()
             );
-        verify(synchronizationService, times(1)).checkSynchronization(any(), any(), any());
     }
 
     @Test
@@ -315,7 +304,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
         io.gravitee.definition.model.flow.Flow secondFlow = new io.gravitee.definition.model.flow.Flow();
         apiEntity.setFlows(List.of(flow, secondFlow));
 
-        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity);
+        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity.getId());
 
         assertThat(isSynchronized).isTrue();
 
@@ -330,7 +319,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eq(1),
                 any()
             );
-        verify(synchronizationService, times(1)).checkSynchronization(any(), any(), any());
     }
 
     @Test
@@ -362,7 +350,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
         )
             .thenReturn(new Page<>(singletonList(eventEntity), 0, 1, 1));
 
-        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity);
+        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity.getId());
 
         assertThat(isSynchronized).isFalse();
 
@@ -377,7 +365,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eq(1),
                 any()
             );
-        verify(synchronizationService, times(1)).checkSynchronization(any(), any(), any());
     }
 
     @Test
@@ -422,7 +409,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
         when(planSearchService.findByApi(eq(GraviteeContext.getExecutionContext()), eq(apiEntity.getId())))
             .thenReturn(Set.of(planPublished, planStaging));
 
-        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity);
+        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity.getId());
 
         assertThat(isSynchronized).isTrue();
 
@@ -437,7 +424,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eq(1),
                 any()
             );
-        verify(synchronizationService, times(1)).checkSynchronization(any(), any(), any());
         verify(planSearchService, times(1)).findByApi(any(), any());
     }
 
@@ -478,7 +464,7 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
         when(planSearchService.findByApi(eq(GraviteeContext.getExecutionContext()), eq(apiEntity.getId())))
             .thenReturn(Set.of(planPublished));
 
-        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity);
+        final boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), apiEntity.getId());
 
         assertThat(isSynchronized).isFalse();
 
@@ -493,7 +479,6 @@ public class ApiStateServiceImpl_IsSynchronizedTest {
                 eq(1),
                 any()
             );
-        verify(synchronizationService, times(1)).checkSynchronization(any(), any(), any());
         verify(planSearchService, times(1)).findByApi(any(), any());
     }
 }

@@ -89,7 +89,6 @@ import io.gravitee.repository.management.model.GroupEvent;
 import io.gravitee.repository.management.model.LifecycleState;
 import io.gravitee.repository.management.model.NotificationReferenceType;
 import io.gravitee.repository.management.model.flow.FlowReferenceType;
-import io.gravitee.rest.api.model.EventEntity;
 import io.gravitee.rest.api.model.EventType;
 import io.gravitee.rest.api.model.MemberEntity;
 import io.gravitee.rest.api.model.MembershipMemberType;
@@ -142,7 +141,6 @@ import io.gravitee.rest.api.service.exceptions.TechnicalManagementException;
 import io.gravitee.rest.api.service.impl.NotifierServiceImpl;
 import io.gravitee.rest.api.service.impl.upgrade.initializer.DefaultMetadataInitializer;
 import io.gravitee.rest.api.service.notification.NotificationTemplateService;
-import io.gravitee.rest.api.service.processor.SynchronizationService;
 import io.gravitee.rest.api.service.search.SearchEngineService;
 import io.gravitee.rest.api.service.v4.*;
 import io.gravitee.rest.api.service.v4.mapper.ApiMapper;
@@ -283,9 +281,6 @@ public class ApiServiceImplTest {
     @Mock
     private TagsValidationService tagsValidationService;
 
-    @InjectMocks
-    private SynchronizationService synchronizationService = Mockito.spy(new SynchronizationService(this.objectMapper));
-
     private ApiMapper apiMapper;
     private ApiService apiService;
     private ApiSearchService apiSearchService;
@@ -376,10 +371,7 @@ public class ApiServiceImplTest {
                 eventLatestRepository,
                 objectMapper,
                 apiMetadataService,
-                apiValidationService,
-                planSearchService,
-                apiConverter,
-                synchronizationService
+                apiValidationService
             );
         //        when(virtualHostService.sanitizeAndValidate(any(), any())).thenAnswer(invocation -> invocation.getArgument(1));
         reset(searchEngineService);

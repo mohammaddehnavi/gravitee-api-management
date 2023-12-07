@@ -116,7 +116,7 @@ public class ApisResource extends AbstractResource {
         NewApiEntity newApiEntity = ApiMapper.INSTANCE.map(api);
         ApiEntity newApi = apiServiceV4.create(GraviteeContext.getExecutionContext(), newApiEntity, getAuthenticatedUser());
 
-        boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), newApi);
+        boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), newApi.getId());
         return Response
             .created(this.getLocationHeader(newApi.getId()))
             .entity(ApiMapper.INSTANCE.map(newApi, uriInfo, isSynchronized))
@@ -145,7 +145,7 @@ public class ApisResource extends AbstractResource {
                         if (expands == null || expands.isEmpty() || !expands.contains(EXPAND_DEPLOYMENT_STATE)) {
                             return null;
                         }
-                        return apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), api);
+                        return apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), api.getId());
                     }
                 )
             )
@@ -203,7 +203,7 @@ public class ApisResource extends AbstractResource {
                 getAuthenticatedUser()
             );
 
-            boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), fromExportedApi);
+            boolean isSynchronized = apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), fromExportedApi.getId());
 
             return Response
                 .created(this.getLocationHeader(fromExportedApi.getId()))
@@ -275,7 +275,7 @@ public class ApisResource extends AbstractResource {
                 ApiMapper.INSTANCE.map(
                     apis.getContent(),
                     uriInfo,
-                    api -> expandDeploymentState ? apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), api) : null
+                    api -> expandDeploymentState ? apiStateService.isSynchronized(GraviteeContext.getExecutionContext(), api.getId()) : null
                 )
             )
             .pagination(PaginationInfo.computePaginationInfo(totalCount, pageItemsCount, paginationParam))

@@ -36,5 +36,5 @@ public interface ApiStateService {
 
     GenericApiEntity stop(ExecutionContext executionContext, String apiId, String userId);
 
-    boolean isSynchronized(ExecutionContext executionContext, GenericApiEntity apiEntity);
+    boolean isSynchronized(ExecutionContext executionContext, String apiId);
 }

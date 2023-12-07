@@ -93,4 +93,6 @@ public interface EventService {
     );
 
     Collection<EventEntity> search(ExecutionContext executionContext, EventQuery query);
+
+    Api buildApiEventPayload(ExecutionContext executionContext, Api api);
 }

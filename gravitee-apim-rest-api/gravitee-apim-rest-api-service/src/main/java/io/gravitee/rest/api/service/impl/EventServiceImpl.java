@@ -425,7 +425,8 @@ public class EventServiceImpl extends TransactionalService implements EventServi
      * @return Gateway API event payload
      * @throws JsonProcessingException
      */
-    private Api buildApiEventPayload(ExecutionContext executionContext, Api api) {
+    @Override
+    public Api buildApiEventPayload(ExecutionContext executionContext, Api api) {
         try {
             Api apiForGatewayEvent = new Api(api);
             if (api.getDefinitionVersion() == null || !api.getDefinitionVersion().equals(DefinitionVersion.V4)) {
