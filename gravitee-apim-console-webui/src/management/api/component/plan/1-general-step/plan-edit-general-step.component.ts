@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { includes } from 'lodash';
 import { combineLatest, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, switchMap, takeUntil } from 'rxjs/operators';
@@ -50,8 +50,14 @@ export class PlanEditGeneralStepComponent implements OnInit, OnDestroy {
   @Input()
   displaySubscriptionsSection = true;
 
+  // Allow to display error notification config section only if PUSH plan is there
+  @Input()
+  displayErrorNotificationConfigSection = false;
+
   @Input()
   planStatus?: PlanStatus;
+
+  @Input() errorNotificationConfigSchema: unknown;
 
   @Input()
   isFederated = false;
@@ -92,6 +98,15 @@ export class PlanEditGeneralStepComponent implements OnInit, OnDestroy {
       characteristics: new UntypedFormControl([]),
       generalConditions: new UntypedFormControl(''),
       autoValidation: new UntypedFormControl(false),
+      sendNotificationOnError: new UntypedFormControl(false),
+      errorConfiguration: new UntypedFormControl({
+        target: '',
+        method: 'POST',
+        headers: [],
+        sendRepeatNotifications: false,
+        schedule: '',
+        messageTemplate: 'Warning - subscriptions to webhook push plan for ${api.name} have entered a failed state.',
+      }),
       commentRequired: new UntypedFormControl(false),
       commentMessage: new UntypedFormControl(''),
       shardingTags: new UntypedFormControl([]),

@@ -106,6 +106,7 @@ export class ApiEndpointComponent implements OnInit, OnDestroy {
           ]);
         }),
         tap(([config, sharedConfig, connectorPlugin, healthCheckSchema]) => {
+          console.log(healthCheckSchema);
           this.endpointSchema = {
             config: GioFormJsonSchemaComponent.isDisplayable(config) ? config : null,
             sharedConfig: GioFormJsonSchemaComponent.isDisplayable(sharedConfig) ? sharedConfig : null,

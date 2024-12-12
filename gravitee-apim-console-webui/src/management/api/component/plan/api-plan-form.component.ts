@@ -35,6 +35,7 @@ import {
   NgControl,
   ValidationErrors,
   Validator,
+  FormControl,
 } from '@angular/forms';
 import { asyncScheduler, interval, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map, observeOn, take, takeUntil, tap } from 'rxjs/operators';
@@ -75,6 +76,15 @@ export type InternalPlanFormValue = {
     commentMessage: string;
     autoValidation: boolean;
     excludedGroups: string[];
+    sendNotificationOnError: boolean; // New field for toggling notification on error
+    errorConfiguration: {
+      target: string;
+      method: string;
+      headers: any[]; // You can specify a more detailed type if needed
+      sendRepeatNotifications: boolean;
+      schedule: string;
+      messageTemplate: string;
+    }; // New field for error notification configuration
   };
   secure: {
     securityConfig: unknown;
@@ -102,7 +112,17 @@ export type PlanFormValue = Pick<
   | 'validation'
   | 'excludedGroups'
   | 'security'
-> & { mode?: PlanMode; selectionRule?: string; tags?: string[]; flows?: Array<FlowV2 | FlowV4> };
+> & { mode?: PlanMode; selectionRule?: string; tags?: string[]; flows?: Array<FlowV2 | FlowV4> ;
+  sendNotificationOnError?: boolean; // New field for toggling notification on error
+  errorConfiguration?: {
+    target: string;
+    method: string;
+    headers: any[]; // You can specify a more detailed type if needed
+    sendRepeatNotifications: boolean;
+    schedule: string;
+    messageTemplate: string;
+  }; 
+};
 
 @Component({
   selector: 'api-plan-form',
@@ -144,6 +164,8 @@ export class ApiPlanFormComponent implements OnInit, AfterViewInit, OnDestroy, C
   public planForm = new UntypedFormGroup({});
   public initialPlanFormValue: unknown;
   public displaySubscriptionsSection = true;
+  public displayErrorNotificationConfigSection = false;
+  public errorNotificationConfigSchema: unknown;
 
   @ViewChild(PlanEditGeneralStepComponent)
   private planEditGeneralStepComponent: PlanEditGeneralStepComponent;
@@ -325,6 +347,80 @@ export class ApiPlanFormComponent implements OnInit, AfterViewInit, OnDestroy, C
 
     // Display subscriptions section only for none KEY_LESS security type
     this.displaySubscriptionsSection = this.planMenuItem.planFormType !== 'KEY_LESS';
+    this.displayErrorNotificationConfigSection = this.planMenuItem.planFormType === 'PUSH';
+    this.errorNotificationConfigSchema = {
+      "type": "object",
+      "id": "urn:jsonschema:io:gravitee:plugin:apiservice:healthcheck:ApiHttpHealthCheckServiceConfiguration",
+      "properties": {
+          "schedule": {
+              "title": "Schedule",
+              "description": "A cron expression to add delay between notifications.",
+              "type": "string",
+              "format": "gio-cron"
+          },
+          "sendRepeatNotifications": {
+              "title": "Send Repeat Notifications",
+              "description": "When enabled, sends notifications of failed subscriptions on a repeated increment.",
+              "type": "boolean"
+          },
+          "method": {
+              "title": "HTTP Method",
+              "description": "HTTP method to invoke the endpoint.",
+              "type": "string",
+              "default": "POST",
+              "enum": [
+                  "GET",
+                  "POST",
+                  "PUT",
+                  "DELETE",
+                  "PATCH",
+                  "HEAD",
+                  "CONNECT",
+                  "OPTIONS",
+                  "TRACE"
+              ]
+          },
+          "target": {
+              "title": "Target",
+              "description": "URL to send the notification to alert on failed subscriptions.",
+              "type": "string"
+          },
+          "messageTemplate": {
+              "title": "Message",
+              "description": "Message template (supports EL - string).",
+              "type": "string"
+          },
+          "headers": {
+              "type": "array",
+              "title": "HTTP Headers",
+              "description": "HTTP headers to add to the health check request",
+              "items": {
+                  "type": "object",
+                  "title": "Header",
+                  "id": "urn:jsonschema:io:gravitee:apiservice:healthcheck:configuration:HttpHeader",
+                  "properties": {
+                      "name": {
+                          "type": "string",
+                          "title": "Name"
+                      },
+                      "value": {
+                          "type": "string",
+                          "title": "Value"
+                      }
+                  },
+                  "required": [
+                      "name",
+                      "value"
+                  ]
+              }
+          }
+      },
+      // "required": [
+      //     "target",
+      //     "schedule"
+      // ]
+  }
+  
 
     // Disable unnecessary fields with KEY_LESS security type
     if (this.planMenuItem.planFormType === 'KEY_LESS') {
@@ -424,6 +520,8 @@ const planToInternalFormValue = (
       commentMessage: plan.commentMessage,
       autoValidation: plan.validation === 'AUTO',
       excludedGroups: plan.excludedGroups,
+      sendNotificationOnError: plan.sendNotificationOnError, // New field for toggling notification on error
+    errorConfiguration: plan.errorConfiguration
     },
     secure: {
       securityConfig: plan.security?.configuration,
@@ -572,6 +670,8 @@ const internalFormValueToPlanV4 = (
     commentRequired: value.general.commentRequired,
     commentMessage: value.general.commentMessage,
     validation: value.general.autoValidation ? 'AUTO' : 'MANUAL',
+    sendNotificationOnError: value.general.sendNotificationOnError,
+    errorConfiguration: value.general.errorConfiguration,
 
     // Secure
     mode: planFormType === 'PUSH' ? 'PUSH' : 'STANDARD',

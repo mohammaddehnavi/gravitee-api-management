@@ -4135,6 +4135,61 @@ components:
                             type: object
                 validation:
                     $ref: "#/components/schemas/PlanValidation"
+                sendNotificationOnError:
+                  type: boolean
+                  description: sendNotificationOnError
+                errorConfiguration:
+                  type: object
+                  properties:
+                    schedule:
+                        type: string
+                        format: gio-cron
+                        title: Schedule
+                        description: A cron expression to add delay between notifications.
+                    sendRepeatNotifications:
+                        type: boolean
+                        title: Send Repeat Notifications
+                        description: When enabled, sends notifications of failed subscriptions on a repeated increment.
+                    method:
+                        type: string
+                        title: HTTP Method
+                        description: HTTP method to invoke the endpoint.
+                        default: POST
+                        enum:
+                          - GET
+                          - POST
+                          - PUT
+                          - DELETE
+                          - PATCH
+                          - HEAD
+                          - CONNECT
+                          - OPTIONS
+                          - TRACE
+                    target:
+                        type: string
+                        title: Target
+                        description: URL to send the notification to alert on failed subscriptions.
+                    messageTemplate:
+                        type: string
+                        title: Message
+                        description: Message template (supports EL - string).
+                    headers:
+                        type: array
+                        title: HTTP Headers
+                        description: HTTP headers to add to the health check request
+                        items:
+                          type: object
+                          title: Header
+                          properties:
+                            name:
+                              type: string
+                              title: Name
+                            value:
+                              type: string
+                              title: Value
+                          required:
+                            - name
+                            - value
             discriminator:
                 propertyName: definitionVersion
                 mapping:

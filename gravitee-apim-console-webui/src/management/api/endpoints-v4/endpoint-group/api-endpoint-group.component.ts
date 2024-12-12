@@ -163,6 +163,7 @@ export class ApiEndpointGroupComponent implements OnInit, OnDestroy {
         .getApiServicePluginSchema(ApiHealthCheckV4FormComponent.HTTP_HEALTH_CHECK)
         .pipe(
           tap((schema) => {
+            console.log(schema);
             this.healthCheckSchema = schema;
           }),
           takeUntil(this.unsubscribe$),

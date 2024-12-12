@@ -113,10 +113,11 @@ export class ApiPlanEditComponent implements OnInit, OnDestroy {
     if (this.planForm.invalid) {
       return;
     }
-
+    console.log(this.planForm);
     const planFormValue: PlanFormValue = {
       ...this.planForm.get('plan').value,
     };
+
 
     const savePlan$ =
       this.mode === 'edit'

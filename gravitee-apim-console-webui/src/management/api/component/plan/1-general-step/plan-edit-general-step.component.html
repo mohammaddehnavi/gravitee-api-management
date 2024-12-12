@@ -85,6 +85,28 @@
     </mat-form-field>
   </ng-container>
 
+  <ng-container *ngIf="displayErrorNotificationConfigSection">
+    <h2>Error Notification Configuration (in case of failed subscription)</h2>
+
+    <!-- Send Notification on Error -->
+  <gio-form-slide-toggle class="sendNotificationOnError-field">
+    Send notification on error
+    <mat-slide-toggle
+      gioFormSlideToggle
+      formControlName="sendNotificationOnError"
+      aria-label="Send notification on error toggle"
+      name="sendNotificationOnError"
+    ></mat-slide-toggle>
+  </gio-form-slide-toggle>
+
+  <gio-form-json-schema 
+  *ngIf="generalForm.get('sendNotificationOnError').value"
+  [jsonSchema]="errorNotificationConfigSchema" 
+  formControlName="errorConfiguration">
+</gio-form-json-schema>
+  
+  </ng-container>
+
   <ng-container *ngIf="!isFederated && (api$ | async)">
     <h2>Deployment</h2>
 

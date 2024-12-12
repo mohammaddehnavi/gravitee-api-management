@@ -1,5 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Gateway - MongoDB" type="Application" factoryName="Application" folderName="Gateway">
+    <envs>
+      <env name="gravitee_license_key" value="Ic5OXgAAACAAAAACAAAADAAAAAhhbGVydC1lbmdpbmVpbmNsdWRlZAAAAD4AAAACAAAABwAAACtjb21wYW55R3Jhdml0ZWUgSW50ZXJuYWwgLSBEZXZlbG9wbWVudCBhbmQgVGVzdGluZwAAACgAAAACAAAABQAAABdlbWFpbGRldnNAZ3Jhdml0ZWVzb3VyY2UuY29tAAAAGgAAAAsAAAAKZXhwaXJ5RGF0ZQAAAZQfKXv/AAAAFAAAAAIAAAAIAAAAAGZlYXR1cmVzAAAAIQAAAAwAAAAJbGljZW5zZUlkmLCN4ly0K7MLspNgBGhERgAAARwAAAABAAAAEAAAAQBsaWNlbnNlU2lnbmF0dXJlFI0ii6z2RUgVRw3CNx7eeODG1lLLWrT3HmNrh9tmFsK9ly1yMdEFEc56/B36o0S4JfmFlwwm6PBy+bYYVd1C2E3VFazkqDznrhsNIGCR7RCA0kdcG8KBcifteSmVxeeRLgoZApB36h39ZvFSK/y4z30xvJLzqMcxar0Yj/E9mqfqrvsQq90BA7kMAUVWYC/+iKcphxCH137O7QeXlOsBySlLiCBl07qDmCHZvqvm4vNKBAOX58R7dXgDaXBSXC1KJKHPzAqTxQd+u9KGOYZHlt1JyGumhR9SAEg1+4AONDQZHeDiyJZXYXJkGCMf6qqA4EItzoo2G2llGyQ3OPydngAAABEAAAACAAAABQAAAABwYWNrcwAAACIAAAACAAAADwAAAAdzaWduYXR1cmVEaWdlc3RTSEEtMjU2AAAAGAAAAAIAAAAEAAAACHRpZXJ1bml2ZXJzZQ==" />
+    </envs>
     <option name="MAIN_CLASS_NAME" value="io.gravitee.gateway.standalone.GatewayContainer" />
     <module name="gravitee-apim-gateway-standalone-container" />
     <option name="VM_PARAMETERS" value="-Dgravitee.home=$ProjectFileDir$/gravitee-apim-gateway/gravitee-apim-gateway-standalone/gravitee-apim-gateway-standalone-distribution/target/distribution" />
