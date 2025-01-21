@@ -76,11 +76,26 @@ export class Step3Endpoints1ListComponent implements OnInit, OnDestroy {
     });
 
     this.connectorPluginsV2Service
-      .listEndpointPluginsByApiType('MESSAGE')
+      .listEndpointPluginsByApiType(currentStepPayload.type)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((endpointPlugins) => {
-        const requiredQoS = this.stepService.payload.selectedEntrypoints.map((e) => e.selectedQos);
+        const entrypoints = currentStepPayload.selectedEntrypoints;
+        const requiredQoS = entrypoints.map((e) => e.selectedQos);
         this.endpoints = mapAndFilterBySupportedQos(endpointPlugins, requiredQoS, this.iconService);
+
+        if (currentStepPayload.type == 'PROXY') {
+          switch (entrypoints[0].id) {
+            case 'http-proxy':
+              this.endpoints = this.endpoints.filter(endpoint => endpoint.id !== 'tcp-proxy');
+              break;
+            default:
+              this.stepService.goToNextStep({
+                groupNumber: 3,
+                component: Step3Endpoints2ConfigComponent,
+              });
+          }
+        }
+
         this.shouldUpgrade = this.connectorPluginsV2Service.selectedPluginsNotAvailable(currentSelectedEndpointIds, this.endpoints);
 
         this.changeDetectorRef.detectChanges();
@@ -174,5 +189,9 @@ export class Step3Endpoints1ListComponent implements OnInit, OnDestroy {
 
   public onRequestUpgrade() {
     this.licenseService.openDialog(this.licenseOptions);
+  }
+
+  public isMultiple() {
+    return this.stepService.payload.type === 'MESSAGE'
   }
 }

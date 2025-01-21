@@ -47,8 +47,7 @@ export const fromConnector: (iconService, connector: ConnectorPlugin) => Connect
 
 export function mapAndFilterBySupportedQos(endpointPlugins: ConnectorPlugin[], requiredQoS: Qos[], iconService: IconService) {
   const mapped = endpointPlugins.map((endpoint) => fromConnector(iconService, endpoint));
-
-  if (requiredQoS.length === 0) {
+  if (!!requiredQoS || requiredQoS.length === 0) {
     return mapped;
   }
 

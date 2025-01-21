@@ -14,21 +14,41 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { GioFormJsonSchemaComponent, GioJsonSchema, GioLicenseService, License } from '@gravitee/ui-particles-angular';
+import {
+  GioFormJsonSchemaComponent,
+  GioJsonSchema,
+  GioLicenseService,
+  License,
+} from '@gravitee/ui-particles-angular';
 import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
 import { omitBy } from 'lodash';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiCreationStepService } from '../../services/api-creation-step.service';
-import { Step3Endpoints1ListComponent } from '../step-3-endpoints/step-3-endpoints-1-list.component';
+import {
+  Step3Endpoints1ListComponent,
+} from '../step-3-endpoints/step-3-endpoints-1-list.component';
 import { ApiCreationPayload } from '../../models/ApiCreationPayload';
-import { Step3Endpoints2ConfigComponent } from '../step-3-endpoints/step-3-endpoints-2-config.component';
-import { ConnectorPluginsV2Service } from '../../../../../services-ngx/connector-plugins-v2.service';
+import {
+  Step3Endpoints2ConfigComponent,
+} from '../step-3-endpoints/step-3-endpoints-2-config.component';
+import {
+  ConnectorPluginsV2Service,
+} from '../../../../../services-ngx/connector-plugins-v2.service';
 import { KafkaHost, PathV4, Qos } from '../../../../../entities/management-api-v2';
-import { ApimFeature, UTMTags } from '../../../../../shared/components/gio-license/gio-license-data';
+import {
+  ApimFeature,
+  UTMTags,
+} from '../../../../../shared/components/gio-license/gio-license-data';
 import { RestrictedDomainService } from '../../../../../services-ngx/restricted-domain.service';
 import { TcpHost } from '../../../../../entities/management-api-v2/api/v4/tcpHost';
 import { KafkaHostData } from '../../../component/gio-form-listeners/gio-form-listeners-kafka/gio-form-listeners-kafka-host.component';
@@ -45,7 +65,12 @@ export class Step2Entrypoints2ConfigComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   public formGroup: UntypedFormGroup;
-  public selectedEntrypoints: { id: string; name: string; supportedListenerType: string; supportedQos?: Qos[] }[];
+  public selectedEntrypoints: {
+    id: string;
+    name: string;
+    supportedListenerType: string;
+    supportedQos?: Qos[]
+  }[];
   public entrypointSchemas: Record<string, GioJsonSchema>;
   public hasHttpListeners: boolean;
   public hasTcpListeners: boolean;
@@ -83,15 +108,15 @@ export class Step2Entrypoints2ConfigComponent implements OnInit, OnDestroy {
     const kafkaHost = currentStepPayload.host;
 
     this.restrictedDomainService
-      .get()
-      .pipe(
-        tap((restrictedDomain) => {
-          this.domainRestrictions = restrictedDomain.map((value) => value.domain) || [];
-          this.enableVirtualHost = paths.find((path) => path.host !== undefined || path.overrideAccess !== undefined) != null;
-        }),
-        takeUntil(this.unsubscribe$),
-      )
-      .subscribe();
+    .get()
+    .pipe(
+      tap((restrictedDomain) => {
+        this.domainRestrictions = restrictedDomain.map((value) => value.domain) || [];
+        this.enableVirtualHost = paths.find((path) => path.host !== undefined || path.overrideAccess !== undefined) != null;
+      }),
+      takeUntil(this.unsubscribe$),
+    )
+    .subscribe();
     this.formGroup = this.formBuilder.group({});
 
     this.initFormForSyncEntrypoints(currentStepPayload, paths, tcpHosts, kafkaHost);
@@ -116,13 +141,13 @@ export class Step2Entrypoints2ConfigComponent implements OnInit, OnDestroy {
         {},
       ),
     )
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe((schemas: Record<string, GioJsonSchema>) => {
-        // Remove schema with empty input
-        this.entrypointSchemas = omitBy(schemas, (schema) => !GioFormJsonSchemaComponent.isDisplayable(schema));
-        this.selectedEntrypoints = currentStepPayload.selectedEntrypoints;
-        this.changeDetectorRef.markForCheck();
-      });
+    .pipe(takeUntil(this.unsubscribe$))
+    .subscribe((schemas: Record<string, GioJsonSchema>) => {
+      // Remove schema with empty input
+      this.entrypointSchemas = omitBy(schemas, (schema) => !GioFormJsonSchemaComponent.isDisplayable(schema));
+      this.selectedEntrypoints = currentStepPayload.selectedEntrypoints;
+      this.changeDetectorRef.markForCheck();
+    });
   }
 
   private initFormForSyncEntrypoints(currentStepPayload: ApiCreationPayload, paths: PathV4[], tcpHosts: TcpHost[], kafkaHost: KafkaHost) {
@@ -169,9 +194,9 @@ export class Step2Entrypoints2ConfigComponent implements OnInit, OnDestroy {
       } else {
         paths = this.enableVirtualHost
           ? // Remove host and overrideAccess from virualHost if is not necessary
-            pathsValue.map(({ path, host, overrideAccess }) => ({ path, host, overrideAccess }))
+          pathsValue.map(({ path, host, overrideAccess }) => ({ path, host, overrideAccess }))
           : // Clear private properties from gio-listeners-virtual-host component
-            pathsValue.map(({ path }) => ({ path }));
+          pathsValue.map(({ path }) => ({ path }));
       }
 
       const selectedEntrypoints: ApiCreationPayload['selectedEntrypoints'] = previousPayload.selectedEntrypoints.map((entrypoint) => ({
@@ -191,12 +216,12 @@ export class Step2Entrypoints2ConfigComponent implements OnInit, OnDestroy {
 
     switch (this.apiType) {
       case 'MESSAGE':
+      case 'PROXY':
         this.stepService.goToNextStep({
           groupNumber: 3,
           component: Step3Endpoints1ListComponent,
         });
         break;
-      case 'PROXY':
       case 'NATIVE':
         this.stepService.goToNextStep({
           groupNumber: 3,

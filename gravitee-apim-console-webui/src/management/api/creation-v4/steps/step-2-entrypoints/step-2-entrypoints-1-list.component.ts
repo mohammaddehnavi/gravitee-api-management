@@ -136,50 +136,11 @@ export class Step2Entrypoints1ListComponent implements OnInit, OnDestroy {
   }
 
   private saveChanges() {
-    this.apiType === 'PROXY' ? this.doSaveSync() : this.doSaveAsync();
+    this.doSave();
   }
 
-  private doSaveSync() {
-    const selectedEntrypointId = this.formGroup.getRawValue().selectedEntrypointsIds[0];
-    const selectedEntrypoint = this.entrypoints.find((e) => selectedEntrypointId.includes(e.id));
 
-    // pre-select the endpoint associated to current proxy entrypoint
-    this.connectorPluginsV2Service
-      .getEndpointPlugin(selectedEntrypoint.id)
-      .pipe(
-        tap((proxyEndpoint) => {
-          this.stepService.validStep((previousPayload) => ({
-            ...previousPayload,
-            type: 'PROXY',
-            selectedEntrypoints: [
-              {
-                id: selectedEntrypoint.id,
-                name: selectedEntrypoint.name,
-                icon: this.iconService.registerSvg(proxyEndpoint.id, selectedEntrypoint.icon),
-                supportedListenerType: selectedEntrypoint.supportedListenerType,
-                deployed: selectedEntrypoint.deployed,
-              },
-            ],
-            selectedEndpoints: [
-              {
-                id: proxyEndpoint.id,
-                name: proxyEndpoint.name,
-                icon: this.iconService.registerSvg(proxyEndpoint.id, proxyEndpoint.icon),
-                deployed: proxyEndpoint.deployed,
-              },
-            ],
-          }));
-          this.stepService.goToNextStep({
-            groupNumber: 2,
-            component: Step2Entrypoints2ConfigComponent,
-          });
-        }),
-        takeUntil(this.unsubscribe$),
-      )
-      .subscribe();
-  }
-
-  private doSaveAsync() {
+  private doSave() {
     const selectedEntrypointsIds = this.formGroup.getRawValue().selectedEntrypointsIds ?? [];
     const selectedEntrypoints = this.entrypoints
       .map(({ id, name, supportedListenerType, supportedQos, icon, deployed }) => ({
@@ -191,7 +152,6 @@ export class Step2Entrypoints1ListComponent implements OnInit, OnDestroy {
         deployed,
       }))
       .filter((e) => selectedEntrypointsIds.includes(e.id));
-
     this.stepService.validStep((previousPayload) => ({
       ...previousPayload,
       selectedEntrypoints,
