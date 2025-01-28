@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,14 +53,23 @@ public class MongoUserRepository implements UserRepository {
     private UserMongoRepository internalUserRepo;
 
     @Autowired
+    private MongoTemplate mongoTemplate;
+
+
+    @Autowired
     private GraviteeMapper mapper;
 
     @Override
     public Optional<User> findBySource(String source, String sourceId, String organizationId) {
         logger.debug("Find user by name source[{}] user[{}]", source, sourceId);
 
-        String escapedSourceId = escaper.matcher(sourceId).replaceAll("\\\\$1");
-        UserMongo user = internalUserRepo.findBySourceAndSourceId(source, escapedSourceId, organizationId);
+        String escapedSourceId = sourceId;//escaper.matcher(sourceId).replaceAll("\\\\$1");
+
+        //     @Query(value = "{ 'source': ?0, 'sourceId': ?1, 'organizationId': ?2 }")
+        Query query = new Query().addCriteria(Criteria.where("source").is(source).and("sourceId").in(escapedSourceId).and("organizationId").is(organizationId));
+        UserMongo user = mongoTemplate.findOne(query, UserMongo.class);
+
+        //UserMongo user = internalUserRepo.findBySourceAndSourceId(source, escapedSourceId, organizationId);
         User res = mapper.map(user);
 
         return Optional.ofNullable(res);

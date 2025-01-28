@@ -22,8 +22,10 @@ import io.gravitee.repository.mongodb.common.MongoFactory;
 import io.gravitee.repository.mongodb.management.converters.BsonUndefinedToNullReadingConverter;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +33,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -49,21 +53,15 @@ public class ManagementRepositoryConfiguration extends AbstractRepositoryConfigu
     @Qualifier("managementMongo")
     private MongoFactory mongoFactory;
 
-    public ManagementRepositoryConfiguration(Environment environment) {
-        super(environment);
+    public ManagementRepositoryConfiguration(Environment environment, ApplicationContext applicationContext) {
+        super(environment, applicationContext);
     }
 
-    @Autowired
-    private MappingMongoConverter mappingMongoConverter;
-
-    private static MongoCustomConversions mongoCustomConversions() {
-        return new MongoCustomConversions(List.of(new BsonUndefinedToNullReadingConverter()));
+    @Bean
+    public BsonUndefinedToNullReadingConverter bsonUndefinedToNullReadingConverter() {
+        return new BsonUndefinedToNullReadingConverter();
     }
 
-    @PostConstruct
-    public void addCustomConverters() {
-        mappingMongoConverter.setCustomConversions(mongoCustomConversions());
-    }
 
     @Bean(name = "managementMongo")
     public MongoFactory mongoFactory(Environment environment) {

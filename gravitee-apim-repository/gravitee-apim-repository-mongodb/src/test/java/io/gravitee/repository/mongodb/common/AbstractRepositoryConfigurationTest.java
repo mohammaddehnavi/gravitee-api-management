@@ -30,7 +30,7 @@ public class AbstractRepositoryConfigurationTest {
     @Before
     public void setUp() throws Exception {
         environment = new MockEnvironment();
-        abstractRepositoryConfiguration = new AbstractRepositoryConfiguration(environment) {};
+        abstractRepositoryConfiguration = new AbstractRepositoryConfiguration(environment, null) {};
     }
 
     @Test

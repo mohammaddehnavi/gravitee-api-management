@@ -61,7 +61,7 @@ public class MongoTestRepositoryConfiguration extends AbstractRepositoryConfigur
     private MongoDBContainer mongoDBContainer;
 
     public MongoTestRepositoryConfiguration(ConfigurableEnvironment environment) {
-        super(environment);
+        super(environment, null);
         environment.getPropertySources().addFirst(new PropertiesPropertySource("graviteeTest", graviteeProperties()));
     }
 
