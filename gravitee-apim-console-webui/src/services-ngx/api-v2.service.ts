@@ -17,7 +17,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, from, mergeMap, Observable, of } from 'rxjs';
 import { distinctUntilChanged, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-import { isEqual } from 'lodash';
+import { get, isEqual } from 'lodash';
 
 import { Constants } from '../entities/Constants';
 import {
@@ -37,6 +37,7 @@ import {
 import { PathToVerify, VerifyApiPathResponse } from '../entities/management-api-v2/api/verifyApiPath';
 import { VerifyApiHostsResponse } from '../entities/management-api-v2/api/verifyApiHosts';
 import { ImportSwaggerDescriptor } from '../entities/management-api-v2/api/v4/importSwaggerDescriptor';
+import { isApiV4 } from '../util';
 
 export interface HostValidatorParams {
   currentHost?: string;
@@ -55,7 +56,7 @@ export class ApiV2Service {
   ) {}
 
   create(newApi: CreateApi): Observable<Api> {
-    return this.http.post<Api>(`${this.constants.env.v2BaseURL}/apis`, newApi);
+    return this.http.post<Api>(`${this.constants.env.v2BaseURL}/apis`, newApi).pipe(map(addProxyMode));
   }
 
   get(id: string): Observable<Api> {
@@ -63,6 +64,7 @@ export class ApiV2Service {
       tap((api) => {
         this.lastApiFetch$.next(api);
       }),
+      map(addProxyMode),
     );
   }
 
@@ -71,6 +73,7 @@ export class ApiV2Service {
       tap((api) => {
         this.lastApiFetch$.next(api);
       }),
+      map(addProxyMode),
     );
   }
 
@@ -103,7 +106,7 @@ export class ApiV2Service {
   }
 
   duplicate(apiId: string, options: DuplicateApiOptions): Observable<Api> {
-    return this.http.post<Api>(`${this.constants.env.v2BaseURL}/apis/${apiId}/_duplicate`, options);
+    return this.http.post<Api>(`${this.constants.env.v2BaseURL}/apis/${apiId}/_duplicate`, options).pipe(map(addProxyMode));
   }
 
   export(
@@ -130,11 +133,13 @@ export class ApiV2Service {
   }
 
   import(importApi: any): Observable<ApiV4> {
-    return this.http.post<ApiV4>(`${this.constants.env.v2BaseURL}/apis/_import/definition`, importApi, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return this.http
+      .post<ApiV4>(`${this.constants.env.v2BaseURL}/apis/_import/definition`, importApi, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .pipe(map(addProxyMode));
   }
 
   importSwaggerApi(descriptor: ImportSwaggerDescriptor) {
@@ -195,6 +200,7 @@ export class ApiV2Service {
       filter((api) => !!api),
       distinctUntilChanged(isEqual),
       shareReplay({ bufferSize: 1, refCount: true }),
+      map(addProxyMode),
     );
   }
 
@@ -224,3 +230,20 @@ export class ApiV2Service {
     );
   }
 }
+
+const addProxyMode = <T extends Api>(api: T): T => {
+  if (isApiV4(api)) {
+    const fistEndpointGroupType: string = get(api, 'proxy.endpointGroups[0].type');
+
+    const proxyModeMap: Record<string, ApiV4['proxyMode']> = {
+      // to change to ai-agent-proxy
+      'ai-agent': 'AI_AGENT',
+      'tcp-proxy': 'TCP',
+      'http-proxy': 'HTTP',
+    };
+    if (proxyModeMap[fistEndpointGroupType]) {
+      api.proxyMode = proxyModeMap[fistEndpointGroupType];
+    }
+    return api;
+  }
+};

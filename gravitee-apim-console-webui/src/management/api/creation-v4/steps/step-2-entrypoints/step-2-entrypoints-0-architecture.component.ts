@@ -15,10 +15,10 @@
  */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { GioConfirmDialogComponent, GioConfirmDialogData, GioLicenseService, License } from '@gravitee/ui-particles-angular';
 import { MatDialog } from '@angular/material/dialog';
-import { takeUntil, tap } from 'rxjs/operators';
+import { catchError, map, takeUntil, tap } from 'rxjs/operators';
 
 import { Step2Entrypoints1ListComponent } from './step-2-entrypoints-1-list.component';
 import { Step2Entrypoints2ConfigComponent } from './step-2-entrypoints-2-config.component';
@@ -45,6 +45,7 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
   public license$: Observable<License>;
   public isOEM$: Observable<boolean>;
   public isMissingNativeKafkaReactor$: Observable<boolean>;
+  public isMissingAIAgent$: Observable<boolean>;
 
   private messageLicenseOptions = { feature: ApimFeature.APIM_EN_MESSAGE_REACTOR, context: UTMTags.API_CREATION_TRY_MESSAGE };
   private nativeKafkaLicenseOptions = { feature: ApimFeature.APIM_NATIVE_KAFKA_REACTOR, context: UTMTags.API_CREATION_TRY_MESSAGE };
@@ -69,6 +70,10 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
 
     this.isMissingMessageReactor$ = this.licenseService.isMissingFeature$(this.messageLicenseOptions.feature);
     this.isMissingNativeKafkaReactor$ = this.licenseService.isMissingFeature$(this.nativeKafkaLicenseOptions.feature);
+    this.isMissingAIAgent$ = this.connectorPluginsV2Service.getEndpointPlugin('ai-agent').pipe(
+      map((plugin) => !plugin),
+      catchError(() => of(true)),
+    );
 
     this.license$ = this.licenseService.getLicense$();
     this.isOEM$ = this.licenseService.isOEM$();
@@ -139,6 +144,9 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
       case 'KAFKA':
         this.doSaveKafka();
         break;
+      case 'AI_AGENT':
+        this.doSaveAiAgent();
+        break;
     }
   }
 
@@ -204,11 +212,54 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
       .subscribe();
   }
 
+  private doSaveAiAgent() {
+    combineLatest([
+      this.connectorPluginsV2Service.getEntrypointPlugin('http-proxy'),
+      this.connectorPluginsV2Service.getEndpointPlugin('ai-agent'),
+    ])
+      .pipe(
+        tap(([entrypoint, endpoint]) => {
+          this.stepService.validStep((previousPayload) => ({
+            ...previousPayload,
+            selectedEntrypoints: [
+              {
+                id: entrypoint.id,
+                name: entrypoint.name,
+                icon: this.iconService.registerSvg(entrypoint.id, entrypoint.icon),
+                supportedListenerType: entrypoint.supportedListenerType,
+                deployed: entrypoint.deployed,
+              },
+            ],
+            selectedEndpoints: [
+              {
+                id: endpoint.id,
+                name: endpoint.name,
+                icon: this.iconService.registerSvg(endpoint.id, endpoint.icon),
+                supportedListenerType: endpoint.supportedListenerType,
+                deployed: endpoint.deployed,
+              },
+            ],
+            type: 'PROXY',
+          }));
+          this.stepService.goToNextStep({
+            groupNumber: 2,
+            component: Step2Entrypoints2ConfigComponent,
+          });
+        }),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe();
+  }
+
   public onRequestMessageUpgrade() {
     this.licenseService.openDialog(this.messageLicenseOptions);
   }
 
   public onRequestNativeKafkaUpgrade() {
+    this.licenseService.openDialog(this.nativeKafkaLicenseOptions);
+  }
+
+  public onRequestAiAgentUpgrade() {
     this.licenseService.openDialog(this.nativeKafkaLicenseOptions);
   }
 }

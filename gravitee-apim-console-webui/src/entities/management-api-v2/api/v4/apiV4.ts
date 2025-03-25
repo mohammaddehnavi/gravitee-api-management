@@ -28,6 +28,7 @@ import { GenericApi } from '../baseApi';
 export interface ApiV4 extends GenericApi {
   definitionVersion: 'V4';
   type: ApiType;
+  proxyMode?: 'AI_AGENT' | 'TCP' | 'HTTP';
   /**
    * The list of listeners associated with this API.
    */
