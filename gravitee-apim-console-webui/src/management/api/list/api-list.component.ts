@@ -262,7 +262,6 @@ export class ApiListComponent implements OnInit, OnDestroy {
       if (api.type === 'NATIVE') {
         return api.listeners.map((listener: Listener): ListenerType => listener.type).includes('KAFKA') ? ' Kafka' : '';
       }
-      console.log(api);
       if (api.proxyMode === 'AI_AGENT') {
         return 'AI Agent';
       }

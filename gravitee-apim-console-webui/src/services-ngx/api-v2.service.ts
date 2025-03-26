@@ -251,6 +251,6 @@ const addProxyMode = <T extends Api>(api: T): T => {
     if (proxyModeMap[fistEndpointGroupType]) {
       api.proxyMode = proxyModeMap[fistEndpointGroupType];
     }
-    return api;
   }
+  return api;
 };
