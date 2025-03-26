@@ -1,3 +1,9 @@
+@use '../../../scss/gio-layout' as gio-layout;
+
+:host {
+  @include gio-layout.gio-responsive-margin-container;
+}
+
 .no-tools-content {
   display: flex;
   flex-flow: column;
@@ -14,4 +20,7 @@ mat-card-header {
 }
 mat-card-content {
   padding-top: 16px;
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
 }
