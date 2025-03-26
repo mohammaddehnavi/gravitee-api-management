@@ -1360,19 +1360,19 @@
                         </exclusion>
                     </exclusions>
                 </dependency>
-                <dependency>
-                    <groupId>com.graviteesource.connector</groupId>
-                    <artifactId>gravitee-endpoint-ai-agent</artifactId>
-                    <version>${gravitee-endpoint-ai-agent.version}</version>
-                    <type>zip</type>
-                    <scope>runtime</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>*</groupId>
-                            <artifactId>*</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
+<!--                <dependency>-->
+<!--                    <groupId>com.graviteesource.connector</groupId>-->
+<!--                    <artifactId>gravitee-endpoint-ai-agent</artifactId>-->
+<!--                    <version>${gravitee-endpoint-ai-agent.version}</version>-->
+<!--                    <type>zip</type>-->
+<!--                    <scope>runtime</scope>-->
+<!--                    <exclusions>-->
+<!--                        <exclusion>-->
+<!--                            <groupId>*</groupId>-->
+<!--                            <artifactId>*</artifactId>-->
+<!--                        </exclusion>-->
+<!--                    </exclusions>-->
+<!--                </dependency>-->
 
                 <!-- Reporters -->
                 <dependency>

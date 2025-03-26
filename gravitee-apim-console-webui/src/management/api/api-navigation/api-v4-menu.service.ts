@@ -39,12 +39,13 @@ export class ApiV4MenuService implements ApiMenuService {
     groupItems: MenuGroupItem[];
   } {
     const hasTcpListeners = api.listeners.find((listener) => listener.type === 'TCP') != null;
+    const isAiAgent = api.proxyMode === 'AI_AGENT';
 
     const subMenuItems: MenuItem[] = [
       this.addConfigurationMenuEntry(),
       ...(this.environmentSettingsService.getSnapshot().apiScore.enabled ? [this.addApiScoreMenuEntry()] : []),
       this.addEntrypointsMenuEntry(hasTcpListeners, api),
-      this.addEndpointsMenuEntry(api, hasTcpListeners),
+      this.addEndpointsMenuEntry(api, hasTcpListeners, isAiAgent),
       this.addPoliciesMenuEntry(hasTcpListeners),
       this.addConsumersMenuEntry(hasTcpListeners),
       this.addDocumentationMenuEntry(api),
@@ -191,7 +192,7 @@ export class ApiV4MenuService implements ApiMenuService {
     };
   }
 
-  private addEndpointsMenuEntry(api: ApiV4, hasTcpListeners: boolean): MenuItem {
+  private addEndpointsMenuEntry(api: ApiV4, hasTcpListeners: boolean, isAiAgent: boolean): MenuItem {
     const menuItem: MenuItem = {
       displayName: 'Endpoints',
       icon: 'endpoints',
@@ -218,14 +219,14 @@ export class ApiV4MenuService implements ApiMenuService {
       });
     }
 
-    if ((api.type === 'PROXY' && !hasTcpListeners) || api.type === 'MESSAGE')
+    if ((api.type === 'PROXY' && !hasTcpListeners && !isAiAgent) || api.type === 'MESSAGE')
       tabs.push({
         displayName: 'Failover',
         routerLink: 'v4/failover',
       });
 
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
-      if (api.type === 'PROXY' && !hasTcpListeners) {
+      if (api.type === 'PROXY' && !hasTcpListeners && !isAiAgent) {
         tabs.push({
           displayName: 'Health Check Dashboard',
           routerLink: 'v4/health-check-dashboard',

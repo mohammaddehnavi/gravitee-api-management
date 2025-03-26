@@ -70,7 +70,7 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
 
     this.isMissingMessageReactor$ = this.licenseService.isMissingFeature$(this.messageLicenseOptions.feature);
     this.isMissingNativeKafkaReactor$ = this.licenseService.isMissingFeature$(this.nativeKafkaLicenseOptions.feature);
-    this.isMissingAIAgent$ = this.connectorPluginsV2Service.getEndpointPlugin('ai-agent').pipe(
+    this.isMissingAIAgent$ = this.connectorPluginsV2Service.getEndpointPlugin('ai-agent-proxy').pipe(
       map((plugin) => !plugin),
       catchError(() => of(true)),
     );
@@ -215,7 +215,7 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
   private doSaveAiAgent() {
     combineLatest([
       this.connectorPluginsV2Service.getEntrypointPlugin('http-proxy'),
-      this.connectorPluginsV2Service.getEndpointPlugin('ai-agent'),
+      this.connectorPluginsV2Service.getEndpointPlugin('ai-agent-proxy'),
     ])
       .pipe(
         tap(([entrypoint, endpoint]) => {

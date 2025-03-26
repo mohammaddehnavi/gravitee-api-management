@@ -157,14 +157,21 @@ export class ApiV2Service {
   }
 
   search(searchQuery?: ApiSearchQuery, sortBy?: ApiSortByParam, page = 1, perPage = 10, manageOnly = true): Observable<ApisResponse> {
-    return this.http.post<ApisResponse>(`${this.constants.env.v2BaseURL}/apis/_search`, searchQuery, {
-      params: {
-        page,
-        perPage,
-        ...(sortBy ? { sortBy } : {}),
-        ...(manageOnly ? {} : { manageOnly: false }),
-      },
-    });
+    return this.http
+      .post<ApisResponse>(`${this.constants.env.v2BaseURL}/apis/_search`, searchQuery, {
+        params: {
+          page,
+          perPage,
+          ...(sortBy ? { sortBy } : {}),
+          ...(manageOnly ? {} : { manageOnly: false }),
+        },
+      })
+      .pipe(
+        map((response) => {
+          response.data = response.data.map(addProxyMode);
+          return response;
+        }),
+      );
   }
 
   updatePicture(apiId: string, newImage: string): Observable<void> {
@@ -233,11 +240,11 @@ export class ApiV2Service {
 
 const addProxyMode = <T extends Api>(api: T): T => {
   if (isApiV4(api)) {
-    const fistEndpointGroupType: string = get(api, 'proxy.endpointGroups[0].type');
+    const fistEndpointGroupType: string = get(api, 'endpointGroups[0].type');
 
     const proxyModeMap: Record<string, ApiV4['proxyMode']> = {
       // to change to ai-agent-proxy
-      'ai-agent': 'AI_AGENT',
+      'ai-agent-proxy': 'AI_AGENT',
       'tcp-proxy': 'TCP',
       'http-proxy': 'HTTP',
     };
