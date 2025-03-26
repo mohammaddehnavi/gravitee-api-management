@@ -27,6 +27,7 @@ export interface ConnectionLog {
   method: HttpMethod;
   status: number;
   requestEnded: boolean;
+  custom?: Record<string, string>;
 
   application: BaseApplication;
   plan: BasePlan;

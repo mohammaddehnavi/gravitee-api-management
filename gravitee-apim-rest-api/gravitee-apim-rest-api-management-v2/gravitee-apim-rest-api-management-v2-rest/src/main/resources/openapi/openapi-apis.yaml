@@ -6247,6 +6247,11 @@ components:
                     type: boolean
                     description: The flag indicating if the request has ended.
                     example: true
+                custom:
+                  type: object
+                  description: Custom fields
+                  additionalProperties:
+                    type: string
         ApiMessageLog:
             type: object
             properties:

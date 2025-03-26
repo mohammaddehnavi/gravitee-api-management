@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ConnectionLog } from '../../../../../../entities/management-api-v2';
+import { LogsIaAgentDetailsComponent } from '../logs-ia-agent-details/logs-ia-agent-details.component';
 
 @Component({
   selector: 'api-runtime-logs-list-row',
@@ -24,6 +26,8 @@ import { ConnectionLog } from '../../../../../../entities/management-api-v2';
   styleUrls: ['./api-runtime-logs-list-row.component.scss'],
 })
 export class ApiRuntimeLogsListRowComponent {
+  matDialog = inject(MatDialog);
+
   @Input()
   log: ConnectionLog;
 
@@ -32,4 +36,14 @@ export class ApiRuntimeLogsListRowComponent {
 
   @Input()
   isMessageApi: boolean;
+
+  get isAiRequest(): boolean {
+    return !!this.log.custom['agent-metrics'] || false;
+  }
+
+  viewAiAgent(log: ConnectionLog) {
+    this.matDialog.open(LogsIaAgentDetailsComponent, {
+      data: log,
+    });
+  }
 }

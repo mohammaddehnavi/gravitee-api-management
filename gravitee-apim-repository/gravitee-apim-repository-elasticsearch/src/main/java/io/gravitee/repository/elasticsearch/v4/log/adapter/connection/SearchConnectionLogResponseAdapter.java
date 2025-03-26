@@ -26,6 +26,8 @@ import io.gravitee.elasticsearch.utils.Type;
 import io.gravitee.repository.log.v4.model.LogResponse;
 import io.gravitee.repository.log.v4.model.connection.ConnectionLog;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SearchConnectionLogResponseAdapter {
 
@@ -51,7 +53,8 @@ public class SearchConnectionLogResponseAdapter {
             .gateway(asTextOrNull(json.get(ConnectionLogField.GATEWAY)))
             .uri(asTextOrNull(json.get(ConnectionLogField.URI)))
             .requestContentLength(asIntOr(json.get(ConnectionLogField.REQUEST_CONTENT_LENGTH), 0))
-            .responseContentLength(asIntOr(json.get(ConnectionLogField.RESPONSE_CONTENT_LENGTH), 0));
+            .responseContentLength(asIntOr(json.get(ConnectionLogField.RESPONSE_CONTENT_LENGTH), 0))
+            .custom(buildCustom(json.get("custom")));
 
         if (index.contains(Type.REQUEST.getType())) {
             return connectionLog
@@ -79,5 +82,12 @@ public class SearchConnectionLogResponseAdapter {
             .entrypointId(asTextOrNull(json.get(ConnectionLogField.ENTRYPOINT_ID.v4Metrics())))
             .gatewayResponseTime(asIntOr(json.get(ConnectionLogField.GATEWAY_RESPONSE_TIME.v4Metrics()), 0))
             .build();
+    }
+
+    private static Map<String, String> buildCustom(JsonNode custom) {
+        if (custom == null) {
+            return Map.of();
+        }
+        return custom.properties().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().asText()));
     }
 }

@@ -22,6 +22,7 @@ import { RouterModule } from '@angular/router';
 import { ApiRuntimeLogsProxyComponent } from './api-runtime-logs-proxy.component';
 
 import { ApiRuntimeLogsConnectionLogDetailsModule, ApiRuntimeLogsDetailsEmptyStateModule } from '../components';
+import { LogsIaAgentDetailsComponent } from '../../../runtime-logs/components/logs-ia-agent-details/logs-ia-agent-details.component';
 
 @NgModule({
   declarations: [ApiRuntimeLogsProxyComponent],
@@ -32,6 +33,7 @@ import { ApiRuntimeLogsConnectionLogDetailsModule, ApiRuntimeLogsDetailsEmptySta
     MatCardModule,
     ApiRuntimeLogsConnectionLogDetailsModule,
     ApiRuntimeLogsDetailsEmptyStateModule,
+    LogsIaAgentDetailsComponent,
   ],
   exports: [ApiRuntimeLogsProxyComponent],
 })

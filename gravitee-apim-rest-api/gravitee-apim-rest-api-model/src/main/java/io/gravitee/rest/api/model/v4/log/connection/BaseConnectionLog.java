@@ -16,6 +16,7 @@
 package io.gravitee.rest.api.model.v4.log.connection;
 
 import io.gravitee.common.http.HttpMethod;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,4 +44,5 @@ public class BaseConnectionLog {
     private long gatewayResponseTime;
     private Long requestContentLength;
     private Long responseContentLength;
+    private Map<String, String> custom;
 }

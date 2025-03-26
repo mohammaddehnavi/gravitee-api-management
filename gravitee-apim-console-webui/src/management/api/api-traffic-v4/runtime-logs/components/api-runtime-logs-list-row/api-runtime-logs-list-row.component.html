@@ -63,6 +63,9 @@
     </div>
   </div>
   <div class="log-row__actions">
-    <a mat-button mat-raised-button data-testId="view-details" [routerLink]="'./' + log.requestId">View details</a>
+    <a mat-button mat-raised-button data-testId="view-details" [routerLink]="'./' + log.requestId">View HTTP logs</a>
+    @if (isAiRequest) {
+      <button mat-button mat-raised-button (click)="viewAiAgent(log)">View AI Agent logs</button>
+    }
   </div>
 </div>
