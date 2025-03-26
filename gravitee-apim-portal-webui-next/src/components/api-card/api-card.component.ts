@@ -19,10 +19,11 @@ import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
 
 import { PictureComponent } from '../picture/picture.component';
+import {MatChip} from "@angular/material/chips";
 
 @Component({
   selector: 'app-api-card',
-  imports: [MatCardModule, MatButtonModule, PictureComponent, RouterModule],
+  imports: [MatCardModule, MatButtonModule, PictureComponent, RouterModule, MatChip],
   templateUrl: './api-card.component.html',
   styleUrl: './api-card.component.scss',
 })
@@ -37,4 +38,6 @@ export class ApiCardComponent {
   picture: string | undefined;
   @Input()
   content?: string;
+  @Input()
+  mcpEnabled: boolean = false;
 }

@@ -1,0 +1,6 @@
+
+  @for (tool of mcpTools(); track $index) {
+    <app-mcp-tool [tool]="tool" />
+  } @empty {
+    No tools available.
+  }

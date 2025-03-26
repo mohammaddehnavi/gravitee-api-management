@@ -30,6 +30,7 @@ import { Api } from '../../../entities/api/api';
 import { Plan } from '../../../entities/plan/plan';
 import { CurrentUserService } from '../../../services/current-user.service';
 import { PlanService } from '../../../services/plan.service';
+import {MatChip} from "@angular/material/chips";
 
 @Component({
   selector: 'app-api-details',
@@ -43,6 +44,7 @@ import { PlanService } from '../../../services/plan.service';
     AsyncPipe,
     RouterModule,
     FormsModule,
+    MatChip,
   ],
   templateUrl: './api-details.component.html',
   styleUrl: './api-details.component.scss',
