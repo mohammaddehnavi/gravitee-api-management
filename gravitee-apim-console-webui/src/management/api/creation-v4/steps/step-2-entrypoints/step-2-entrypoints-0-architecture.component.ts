@@ -147,6 +147,9 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
       case 'AI_AGENT':
         this.doSaveAiAgent();
         break;
+      case 'SDK_AGENT':
+        this.doSaveSdkAgent();
+        break;
     }
   }
 
@@ -251,6 +254,45 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
       .subscribe();
   }
 
+  private doSaveSdkAgent() {
+    combineLatest([
+      this.connectorPluginsV2Service.getEntrypointPlugin('http-proxy'),
+      this.connectorPluginsV2Service.getEndpointPlugin('agent-sdk'),
+    ])
+      .pipe(
+        tap(([entrypoint, endpoint]) => {
+          this.stepService.validStep((previousPayload) => ({
+            ...previousPayload,
+            selectedEntrypoints: [
+              {
+                id: entrypoint.id,
+                name: entrypoint.name,
+                icon: this.iconService.registerSvg(entrypoint.id, entrypoint.icon),
+                supportedListenerType: entrypoint.supportedListenerType,
+                deployed: entrypoint.deployed,
+              },
+            ],
+            selectedEndpoints: [
+              {
+                id: endpoint.id,
+                name: endpoint.name,
+                icon: this.iconService.registerSvg(endpoint.id, endpoint.icon),
+                supportedListenerType: endpoint.supportedListenerType,
+                deployed: endpoint.deployed,
+              },
+            ],
+            type: 'PROXY',
+          }));
+          this.stepService.goToNextStep({
+            groupNumber: 2,
+            component: Step2Entrypoints2ConfigComponent,
+          });
+        }),
+        takeUntil(this.unsubscribe$),
+      )
+      .subscribe();
+  }
+
   public onRequestMessageUpgrade() {
     this.licenseService.openDialog(this.messageLicenseOptions);
   }
@@ -260,6 +302,10 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
   }
 
   public onRequestAiAgentUpgrade() {
+    this.licenseService.openDialog(this.nativeKafkaLicenseOptions);
+  }
+
+  public onRequestSdkAgentUpgrade() {
     this.licenseService.openDialog(this.nativeKafkaLicenseOptions);
   }
 }

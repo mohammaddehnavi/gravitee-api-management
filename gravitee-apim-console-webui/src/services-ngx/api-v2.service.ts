@@ -245,6 +245,7 @@ const addProxyMode = <T extends Api>(api: T): T => {
     const proxyModeMap: Record<string, ApiV4['proxyMode']> = {
       // to change to ai-agent-proxy
       'ai-agent-proxy': 'AI_AGENT',
+      'agent-sdk': 'SDK_AGENT',
       'tcp-proxy': 'TCP',
       'http-proxy': 'HTTP',
     };

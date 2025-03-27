@@ -124,13 +124,24 @@
               </div>
             </gio-selection-list-option-layout-body>
           </gio-selection-list-option-layout>
-          <div *ngIf="isMissingAIAgent$ | async">
-            <gio-license-banner
-              [license]="license$ | async"
-              [isOEM]="isOEM$ | async"
-              (onRequestUpgrade)="onRequestAiAgentUpgrade()"
-            ></gio-license-banner>
-          </div>
+        </mat-radio-button>
+        <mat-radio-button value="SDK_AGENT" [class.gio-selection__selected]="form.controls['type'].value === 'SDK_AGENT'">
+          <gio-selection-list-option-layout>
+            <gio-selection-list-option-layout-title>
+              <div class="option__badges">Gravitee AI Agent SDK (GIOAIASDK) <span class="gio-badge-accent">New</span></div>
+            </gio-selection-list-option-layout-title>
+
+            <gio-selection-list-option-layout-body>
+              <p>
+                Choose this mode if you want to expose an AI agent as an API. The gateway will forward incoming calls to the AI agent integrated with the Gravitee SDK Agent.
+              </p>
+              <div class="option__badges">
+                Can (also) expose
+                <span class="gio-badge-neutral gio-caption-2">LangChain</span>
+                <span class="gio-badge-neutral gio-caption-2">CrewAI</span>
+              </div>
+            </gio-selection-list-option-layout-body>
+          </gio-selection-list-option-layout>
         </mat-radio-button>
       </mat-radio-group>
 
