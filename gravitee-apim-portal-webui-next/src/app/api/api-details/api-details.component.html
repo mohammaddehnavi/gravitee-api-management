@@ -24,7 +24,7 @@
         <div class="m3-body-medium">{{ api.version }}</div>
       </div>
       @if (!!api.mcp?.enabled) {
-        <mat-chip>MCP Ready</mat-chip>
+        <mat-chip>MCP Server</mat-chip>
       }
       @if (plans$ | async; as plans) {
         <div class="api-details__header-button">
