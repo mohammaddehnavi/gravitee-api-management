@@ -19,13 +19,13 @@ if (argv.latest) {
   }
 }
 
-console.log(chalk.blue(`Triggering Docker & RPMs Pipeline`));
+console.log(chalk.blue(`Triggering Docker Pipeline`));
 
 // Use the preconfigured payload from config folder with the good parameters
 const body = {
   branch: versions.branch,
   parameters: {
-    gio_action: 'build_rpm_&_docker_images',
+    gio_action: 'build_docker_images',
     docker_tag_as_latest: isLatest,
     dry_run: isDryRun(),
     graviteeio_version: releasingVersion,
@@ -50,3 +50,4 @@ if (response.status === 201) {
 } else {
   console.log(chalk.yellow('Something went wrong'));
 }
+
