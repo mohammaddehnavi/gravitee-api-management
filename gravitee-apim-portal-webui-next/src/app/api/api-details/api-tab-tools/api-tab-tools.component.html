@@ -2,5 +2,5 @@
   @for (tool of mcpTools(); track $index) {
     <app-mcp-tool [tool]="tool" />
   } @empty {
-    No tools available.
+    <div class="m3-body-medium">No tools available.</div>
   }
