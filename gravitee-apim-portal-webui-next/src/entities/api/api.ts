@@ -15,8 +15,8 @@
  */
 import { ApiLinks } from './api-links';
 import { ListenerType } from './listener-type';
+import { MCP } from './mcp';
 import { User } from '../user/user';
-import {MCP} from "./mcp";
 
 /**
  * Describes an API.

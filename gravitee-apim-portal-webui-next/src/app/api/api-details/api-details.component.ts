@@ -18,6 +18,7 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChip } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
@@ -30,7 +31,6 @@ import { Api } from '../../../entities/api/api';
 import { Plan } from '../../../entities/plan/plan';
 import { CurrentUserService } from '../../../services/current-user.service';
 import { PlanService } from '../../../services/plan.service';
-import {MatChip} from "@angular/material/chips";
 
 @Component({
   selector: 'app-api-details',

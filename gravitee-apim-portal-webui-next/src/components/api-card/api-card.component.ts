@@ -16,10 +16,10 @@
 import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChip } from '@angular/material/chips';
 import { RouterModule } from '@angular/router';
 
 import { PictureComponent } from '../picture/picture.component';
-import {MatChip} from "@angular/material/chips";
 
 @Component({
   selector: 'app-api-card',

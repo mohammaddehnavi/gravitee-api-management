@@ -89,6 +89,8 @@ import { DocumentationEditCustomPageComponent } from './documentation-v4/documen
 import { DocumentationEditHomepageComponent } from './documentation-v4/main-pages-tab/documentation-edit-homepage/documentation-edit-homepage.component';
 import { ApiDocumentationChooseExistingPageComponent } from './documentation-v4/components/api-documentation-choose-existing-page/api-documentation-choose-existing-page.component';
 import { ApiHealthCheckDashboardV4Component } from './health-check-dashboard-v4/api-health-check-dashboard-v4.component';
+import { McpComponent } from './mcp/mcp.component';
+import { McpImportViaOpenApiComponent } from './mcp/mcp-import-via-openapi/mcp-import-via-open-api.component';
 
 import { DocumentationManagementComponent } from '../../components/documentation/documentation-management.component';
 import { DocumentationNewPageComponent } from '../../components/documentation/new-page.component';
@@ -102,8 +104,6 @@ import { HasLicenseGuard } from '../../shared/components/gio-license/has-license
 import { PermissionGuard } from '../../shared/components/gio-permission/gio-permission.guard';
 import { RuntimeAlertCreateComponent } from '../../components/runtime-alerts';
 import { ApiScoringGuard } from '../../shared/guards/api-scoring.guard';
-import {McpComponent} from "./mcp/mcp.component";
-import {McpImportViaOpenApiComponent} from "./mcp/mcp-import-via-openapi/mcp-import-via-open-api.component";
 
 const apisRoutes: Routes = [
   {
@@ -310,18 +310,18 @@ const apisRoutes: Routes = [
         component: McpComponent,
         data: {
           permissions: {
-            anyOf: ['api-definition-r']
-          }
-        }
+            anyOf: ['api-definition-r'],
+          },
+        },
       },
       {
         path: 'mcp/import',
         component: McpImportViaOpenApiComponent,
         data: {
           permissions: {
-            anyOf: ['api-definition-u']
-          }
-        }
+            anyOf: ['api-definition-u'],
+          },
+        },
       },
       {
         path: 'metadata',
