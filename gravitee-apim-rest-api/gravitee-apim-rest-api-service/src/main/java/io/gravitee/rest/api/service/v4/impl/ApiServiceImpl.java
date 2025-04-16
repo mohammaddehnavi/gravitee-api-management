@@ -475,8 +475,27 @@ public class ApiServiceImpl extends AbstractService implements ApiService {
             api.setPicture(apiToUpdate.getPicture());
             api.setBackground(apiToUpdate.getBackground());
 
-            if (CollectionUtils.isEmpty(updateApiEntity.getGroups())) {
+            if (updateApiEntity.getGroups() == null) {
                 api.setGroups(apiToUpdate.getGroups());
+            }
+
+            if (OriginContext.Origin.KUBERNETES.name().equalsIgnoreCase(api.getOrigin())) {
+                if (api.getGroups() == null) {
+                    api.setGroups(new HashSet<>());
+                } else {
+                    api.setGroups(new HashSet<>(api.getGroups()));
+                }
+
+                groupService
+                    .findAll(executionContext)
+                    .forEach(group -> {
+                        group
+                            .getEventRules()
+                            .stream()
+                            .filter(rule -> GroupEvent.API_CREATE.name().equals(rule.getEvent()))
+                            .findFirst()
+                            .ifPresent(rule -> api.getGroups().add(group.getId()));
+                    });
             }
 
             if (updateApiEntity.getLabels() == null && apiToUpdate.getLabels() != null) {
