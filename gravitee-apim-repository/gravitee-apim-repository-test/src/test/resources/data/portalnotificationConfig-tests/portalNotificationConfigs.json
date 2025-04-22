@@ -1,29 +1,5 @@
 [
   {
-    "user": "userid",
-    "referenceType": "API",
-    "referenceId": "config-to-delete",
-    "hooks": ["A", "B"],
-    "createdAt": 1439022010883,
-    "updatedAt": 1439022010883
-  },
-  {
-    "user": "userid",
-    "referenceType": "API",
-    "referenceId": "config-to-update",
-    "hooks": ["A", "B"],
-    "createdAt": 1439022010883,
-    "updatedAt": 1439022010883
-  },
-  {
-    "user": "userid",
-    "referenceType": "API",
-    "referenceId": "config-to-find",
-    "hooks": ["A", "B"],
-    "createdAt": 1439022010883,
-    "updatedAt": 1439022010883
-  },
-  {
     "user": "userA",
     "referenceType": "APPLICATION",
     "referenceId": "search",
@@ -44,6 +20,30 @@
     "referenceType": "APPLICATION",
     "referenceId": "search",
     "hooks": ["A", "C"],
+    "createdAt": 1439022010883,
+    "updatedAt": 1439022010883
+  },
+  {
+    "user": "userD",
+    "referenceType": "API",
+    "referenceId": "config-to-delete",
+    "hooks": ["A", "B"],
+    "createdAt": 1439022010883,
+    "updatedAt": 1439022010883
+  },
+  {
+    "user": "userE",
+    "referenceType": "API",
+    "referenceId": "config-to-update",
+    "hooks": ["A", "B"],
+    "createdAt": 1439022010883,
+    "updatedAt": 1439022010883
+  },
+  {
+    "user": "userF",
+    "referenceType": "API",
+    "referenceId": "config-to-find",
+    "hooks": ["A", "B"],
     "createdAt": 1439022010883,
     "updatedAt": 1439022010883
   },

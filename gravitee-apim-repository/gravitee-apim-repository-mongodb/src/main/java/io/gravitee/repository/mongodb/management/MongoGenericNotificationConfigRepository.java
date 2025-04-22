@@ -100,6 +100,12 @@ public class MongoGenericNotificationConfigRepository implements GenericNotifica
     }
 
     @Override
+    public List<GenericNotificationConfig> findByHook(String hook) {
+        LOGGER.debug("Find GenericNotificationConfig by hook [{}]", hook);
+        return internalRepo.findByHook(hook).stream().map(this::map).collect(Collectors.toList());
+    }
+
+    @Override
     public List<GenericNotificationConfig> findByReference(NotificationReferenceType referenceType, String referenceId)
         throws TechnicalException {
         LOGGER.debug("Find GenericNotificationConfig [{}, {}]", referenceType, referenceId);

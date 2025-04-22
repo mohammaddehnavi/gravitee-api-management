@@ -28,6 +28,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface GenericNotificationConfigMongoRepository extends MongoRepository<GenericNotificationConfigMongo, String> {
+    @Query("{ 'hooks': ?0 }")
+    Set<GenericNotificationConfigMongo> findByHook(String hook);
+
     @Query("{ 'hooks': ?0, 'referenceType': ?1, 'referenceId': ?2 }")
     Set<GenericNotificationConfigMongo> findByReferenceAndHook(String hook, String referenceType, String referenceId);
 

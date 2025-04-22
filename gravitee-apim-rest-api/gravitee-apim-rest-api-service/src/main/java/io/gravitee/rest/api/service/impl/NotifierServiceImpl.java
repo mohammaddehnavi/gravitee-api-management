@@ -149,20 +149,9 @@ public class NotifierServiceImpl extends AbstractService implements NotifierServ
     @Override
     @Async
     public void trigger(final ExecutionContext executionContext, final PortalHook hook, Map<String, Object> params) {
-        triggerPortalNotifications(
-            executionContext,
-            hook,
-            NotificationReferenceType.ENVIRONMENT,
-            executionContext.getEnvironmentId(),
-            params
-        );
-        triggerGenericNotifications(
-            executionContext,
-            hook,
-            NotificationReferenceType.ENVIRONMENT,
-            executionContext.getEnvironmentId(),
-            params
-        );
+        String envId = executionContext.hasEnvironmentId() ? executionContext.getEnvironmentId() : null;
+        triggerPortalNotifications(executionContext, hook, NotificationReferenceType.ENVIRONMENT, envId, params);
+        triggerGenericNotifications(executionContext, hook, NotificationReferenceType.ENVIRONMENT, envId, params);
     }
 
     private void triggerPortalNotifications(
@@ -173,11 +162,10 @@ public class NotifierServiceImpl extends AbstractService implements NotifierServ
         final Map<String, Object> params
     ) {
         try {
-            List<String> userIds = portalNotificationConfigRepository
-                .findByReferenceAndHook(hook.name(), refType, refId)
-                .stream()
-                .map(PortalNotificationConfig::getUser)
-                .collect(Collectors.toList());
+            List<PortalNotificationConfig> portalNotificationConfigs = refId == null
+                ? portalNotificationConfigRepository.findByHook(hook.name())
+                : portalNotificationConfigRepository.findByReferenceAndHook(hook.name(), refType, refId);
+            List<String> userIds = portalNotificationConfigs.stream().map(PortalNotificationConfig::getUser).collect(Collectors.toList());
             if (!userIds.isEmpty()) {
                 portalNotificationService.create(executionContext, hook, userIds, params);
             }
@@ -206,8 +194,10 @@ public class NotifierServiceImpl extends AbstractService implements NotifierServ
         List<Recipient> additionalRecipients
     ) {
         try {
-            var notificationConfigs = genericNotificationConfigRepository
-                .findByReferenceAndHook(hook.name(), refType, refId)
+            List<GenericNotificationConfig> genericNotificationConfigs = refId == null
+                ? genericNotificationConfigRepository.findByHook(hook.name())
+                : genericNotificationConfigRepository.findByReferenceAndHook(hook.name(), refType, refId);
+            var notificationConfigs = genericNotificationConfigs
                 .stream()
                 .collect(Collectors.groupingBy(GenericNotificationConfig::getNotifier));
             if (!notificationConfigs.isEmpty()) {

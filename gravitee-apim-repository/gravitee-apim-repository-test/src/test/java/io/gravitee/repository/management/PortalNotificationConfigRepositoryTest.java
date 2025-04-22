@@ -19,6 +19,7 @@ import static io.gravitee.repository.utils.DateUtils.compareDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import io.gravitee.repository.management.model.NotificationReferenceType;
 import io.gravitee.repository.management.model.PortalNotificationConfig;
@@ -60,7 +61,7 @@ public class PortalNotificationConfigRepositoryTest extends AbstractManagementRe
 
     @Test
     public void shouldDelete() throws Exception {
-        assertTrue(portalNotificationConfigRepository.findById("userid", NotificationReferenceType.API, "config-to-delete").isPresent());
+        assertTrue(portalNotificationConfigRepository.findById("userD", NotificationReferenceType.API, "config-to-delete").isPresent());
         final PortalNotificationConfig cfg = PortalNotificationConfig
             .builder()
             .referenceType(NotificationReferenceType.API)
@@ -77,7 +78,7 @@ public class PortalNotificationConfigRepositoryTest extends AbstractManagementRe
             .builder()
             .referenceType(NotificationReferenceType.API)
             .referenceId("config-to-update")
-            .user("userid")
+            .user("userE")
             .hooks(Arrays.asList("D", "B", "C"))
             .updatedAt(new Date(1479022010883L))
             .createdAt(new Date(1469022010883L))
@@ -99,14 +100,14 @@ public class PortalNotificationConfigRepositoryTest extends AbstractManagementRe
             .builder()
             .referenceType(NotificationReferenceType.API)
             .referenceId("config-to-find")
-            .user("userid")
+            .user("userF")
             .hooks(Arrays.asList("A", "B"))
             .updatedAt(new Date(1439022010883L))
             .createdAt(new Date(1439022010883L))
             .build();
 
         Optional<PortalNotificationConfig> optNotificationFound = portalNotificationConfigRepository.findById(
-            "userid",
+            "userF",
             NotificationReferenceType.API,
             "config-to-find"
         );
@@ -159,6 +160,22 @@ public class PortalNotificationConfigRepositoryTest extends AbstractManagementRe
             "search"
         );
 
+        assertTrue("size", configs.isEmpty());
+    }
+
+    @Test
+    public void shouldFindByHook() throws Exception {
+        List<PortalNotificationConfig> configs = portalNotificationConfigRepository.findByHook("B");
+        List<String> userIds = configs.stream().map(PortalNotificationConfig::getUser).toList();
+        assertAll(
+            () -> assertEquals("size", 5, configs.size()),
+            () -> assertTrue(userIds.containsAll(List.of("userA", "userB", "userD", "userE", "userF")))
+        );
+    }
+
+    @Test
+    public void shouldNotFindByHook() throws Exception {
+        List<PortalNotificationConfig> configs = portalNotificationConfigRepository.findByHook("E");
         assertTrue("size", configs.isEmpty());
     }
 

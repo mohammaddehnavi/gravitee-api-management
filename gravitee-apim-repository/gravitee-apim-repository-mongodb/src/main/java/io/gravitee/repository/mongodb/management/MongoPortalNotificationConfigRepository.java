@@ -82,6 +82,12 @@ public class MongoPortalNotificationConfigRepository implements PortalNotificati
     }
 
     @Override
+    public List<PortalNotificationConfig> findByHook(String hook) {
+        LOGGER.debug("Find PortalNotificationConfigs by hook [{}]", hook);
+        return internalRepo.findByHook(hook).stream().map(this::map).collect(Collectors.toList());
+    }
+
+    @Override
     public List<PortalNotificationConfig> findByReferenceAndHook(String hook, NotificationReferenceType referenceType, String referenceId) {
         LOGGER.debug("Find PortalNotificationConfigs [{}, {}, {}]", hook, referenceType, referenceId);
         return internalRepo
