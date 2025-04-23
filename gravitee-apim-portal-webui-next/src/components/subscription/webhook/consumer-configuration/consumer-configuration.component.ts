@@ -101,10 +101,12 @@ export class ConsumerConfigurationComponent implements OnInit {
   submit() {
     const updatedSubscription = this.toUpdateSubscription(this.consumerConfigurationForm.getRawValue());
 
+    // this may be only for edit mode:
     const dialogRef = this.dialog.open<SubscriptionCommentDialogComponent, SubscriptionCommentDialogData, string>(
       SubscriptionCommentDialogComponent,
       { data: { plan: this.plan } as SubscriptionCommentDialogData, width: '500px' },
     );
+    //
 
     dialogRef
       .afterClosed()
