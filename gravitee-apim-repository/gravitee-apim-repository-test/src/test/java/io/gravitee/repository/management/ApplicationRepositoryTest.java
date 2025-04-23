@@ -348,6 +348,23 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
     }
 
     @Test
+    public void shouldSearchByNameAndIdsAndRestrictedIds() throws Exception {
+        final Page<Application> appsPage = applicationRepository.search(
+            ApplicationCriteria
+                .builder()
+                .name("deleted-app")
+                .ids(Set.of("deleted-app", "searched-app1", "app-with-long-client-id", "app-with-long-name"))
+                .restrictedToIds(Set.of("searched-app1", "app-with-long-client-id"))
+                .build(),
+            null
+        );
+        final List<Application> apps = appsPage.getContent();
+
+        assertEquals(2, apps.size());
+        assertTrue(apps.stream().map(Application::getId).toList().containsAll(Set.of("searched-app1", "app-with-long-client-id")));
+    }
+
+    @Test
     public void shouldSearchByEnvironmentIds() throws Exception {
         final Page<Application> appsPage = applicationRepository.search(
             ApplicationCriteria.builder().environmentIds(Set.of("DEV", "TEST", "PROD")).build(),

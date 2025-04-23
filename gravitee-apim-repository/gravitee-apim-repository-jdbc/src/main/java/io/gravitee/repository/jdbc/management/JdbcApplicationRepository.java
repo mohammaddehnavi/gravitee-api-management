@@ -472,6 +472,11 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
                     sbQuery.append("and lower(a.name) like ? ");
                 }
             }
+
+            if (!isEmpty(applicationCriteria.getRestrictedToIds())) {
+                sbQuery.append("and a.id in (").append(getOrm().buildInClause(applicationCriteria.getRestrictedToIds())).append(") ");
+            }
+
             if (applicationCriteria.getStatus() != null) {
                 sbQuery.append("and a.status = ? ");
             }
@@ -517,6 +522,9 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
                     }
                     if (hasText(applicationCriteria.getName())) {
                         ps.setString(lastIndex++, "%" + applicationCriteria.getName().toLowerCase() + "%");
+                    }
+                    if (!isEmpty(applicationCriteria.getRestrictedToIds())) {
+                        lastIndex = getOrm().setArguments(ps, applicationCriteria.getRestrictedToIds(), lastIndex);
                     }
                     if (applicationCriteria.getStatus() != null) {
                         ps.setString(lastIndex++, applicationCriteria.getStatus().name());

@@ -31,6 +31,7 @@ import lombok.Getter;
 public class ApplicationCriteria {
 
     private Set<String> ids;
+    private Set<String> restrictedToIds;
     private String name;
     private Set<String> environmentIds;
     private ApplicationStatus status;

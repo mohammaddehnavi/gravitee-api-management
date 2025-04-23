@@ -48,4 +48,27 @@ public class JdbcApplicationRepositoryTest {
             "order by a.name asc";
         assertThat(query).isEqualTo(expectedQuery);
     }
+
+    @Test
+    public void searchQuery_idsAndNameAndRestrictedIdsAndEnvironmentIdsAndStatus_orderByNameAsc() {
+        JdbcApplicationRepository repository = new JdbcApplicationRepository("table_prefix_");
+        Sortable sortable = new SortableBuilder().field("name").order(Order.ASC).build();
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
+            .ids(Set.of("id1", "id2", "id3", "id4"))
+            .restrictedToIds(Set.of("id1", "id2"))
+            .name("name1")
+            .environmentIds(Set.of("env1"))
+            .status(ApplicationStatus.ACTIVE)
+            .build();
+        String query = repository.searchQuery(criteria, sortable);
+        String expectedQuery =
+            "select a.id, a.environment_id, a.name, a.description, a.type, a.created_at, " +
+            "a.updated_at, a.status, a.disable_membership_notifications, a.api_key_mode, a.origin, " +
+            "am.k as am_k, am.v as am_v from table_prefix_applications a left join " +
+            "table_prefix_application_metadata am on a.id = am.application_id where 1 = 1 and " +
+            "(a.id in (? , ? , ? , ? ) or lower(a.name) like ?) and a.id in (? , ? ) and a.status = ? and a.environment_id in (? ) " +
+            "order by a.name asc";
+        assertThat(query).isEqualTo(expectedQuery);
+    }
 }

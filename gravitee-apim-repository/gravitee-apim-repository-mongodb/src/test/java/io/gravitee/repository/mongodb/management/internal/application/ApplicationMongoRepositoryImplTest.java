@@ -45,4 +45,24 @@ public class ApplicationMongoRepositoryImplTest {
                 "\"environmentId\":{\"$in\":[\"DEFAULT\"]},\"status\":\"ACTIVE\"}"
             );
     }
+
+    @Test
+    public void buildSearchCriteria_withIdsAndNameAndRestrictedIdsAndEnvironmentIdsAndStatus() throws JsonProcessingException {
+        ApplicationMongoRepositoryImpl repository = new ApplicationMongoRepositoryImpl();
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
+            .ids(Set.of("id1", "id2", "id3", "id4"))
+            .restrictedToIds(Set.of("id1", "id2"))
+            .name("name1")
+            .environmentIds(Set.of("env1"))
+            .status(ApplicationStatus.ACTIVE)
+            .build();
+        Query query = repository.buildSearchCriteria(criteria);
+        var queryJson = new ObjectMapper().writeValueAsString(query.getQueryObject());
+        assertThat(queryJson)
+            .isEqualTo(
+                "{\"$or\":[{\"id\":{\"$in\":[\"id1\",\"id2\",\"id3\",\"id4\"]}},{\"name\":\"name1\"}],\"id\":{\"$in\":" +
+                "[\"id2\",\"id1\"]},\"environmentId\":{\"$in\":[\"env1\"]},\"status\":\"ACTIVE\"}"
+            );
+    }
 }

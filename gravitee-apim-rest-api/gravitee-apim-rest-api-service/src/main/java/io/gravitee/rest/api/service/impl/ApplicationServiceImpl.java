@@ -1561,7 +1561,7 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
                 if (userApplicationsIds.isEmpty()) {
                     return null;
                 }
-                criteriaBuilder.ids(userApplicationsIds);
+                criteriaBuilder.restrictedToIds(userApplicationsIds);
             }
         }
         return criteriaBuilder.build();

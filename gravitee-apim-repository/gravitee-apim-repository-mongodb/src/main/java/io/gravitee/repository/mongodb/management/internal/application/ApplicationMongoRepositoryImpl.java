@@ -17,6 +17,7 @@ package io.gravitee.repository.mongodb.management.internal.application;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import io.gravitee.common.data.domain.Page;
 import io.gravitee.repository.management.api.search.ApplicationCriteria;
@@ -97,6 +98,10 @@ public class ApplicationMongoRepositoryImpl implements ApplicationMongoRepositor
                 if (criteria.getName() != null && !criteria.getName().isEmpty()) {
                     query.addCriteria(where("name").regex(criteria.getName(), "i"));
                 }
+            }
+
+            if (!isEmpty(criteria.getRestrictedToIds())) {
+                query.addCriteria(where("id").in(criteria.getRestrictedToIds()));
             }
 
             if (criteria.getEnvironmentIds() != null) {
