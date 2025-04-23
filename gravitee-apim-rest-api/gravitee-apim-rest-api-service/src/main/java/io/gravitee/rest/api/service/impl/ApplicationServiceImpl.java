@@ -273,14 +273,16 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
                 return Collections.emptySet();
             }
 
-            ApplicationCriteria.Builder criteriaBuilder = new ApplicationCriteria.Builder().ids(new HashSet<>(applicationIds));
+            ApplicationCriteria.ApplicationCriteriaBuilder criteriaBuilder = ApplicationCriteria
+                .builder()
+                .restrictedToIds(new HashSet<>(applicationIds));
 
             if (applicationStatus != null) {
                 criteriaBuilder.status(applicationStatus);
             }
 
             if (executionContext.hasEnvironmentId()) {
-                criteriaBuilder.environmentIds(executionContext.getEnvironmentId());
+                criteriaBuilder.environmentIds(Set.of(executionContext.getEnvironmentId()));
             }
 
             Page<Application> applications = applicationRepository.search(criteriaBuilder.build(), null);
@@ -1522,7 +1524,7 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
     }
 
     private ApplicationCriteria buildSearchCriteria(ExecutionContext executionContext, ApplicationQuery applicationQuery) {
-        ApplicationCriteria.Builder criteriaBuilder = new ApplicationCriteria.Builder();
+        ApplicationCriteria.ApplicationCriteriaBuilder criteriaBuilder = ApplicationCriteria.builder();
 
         if (executionContext.hasEnvironmentId()) {
             criteriaBuilder.environmentIds(Sets.newHashSet(executionContext.getEnvironmentId()));
@@ -1536,29 +1538,36 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
         }
 
         if (applicationQuery != null) {
-            if (applicationQuery.getIds() != null && !applicationQuery.getIds().isEmpty()) {
-                criteriaBuilder.ids(applicationQuery.getIds());
-            }
-
-            ApplicationStatus applicationStatus = null;
-            if (applicationQuery.getGroups() != null && !applicationQuery.getGroups().isEmpty()) {
+            if (CollectionUtils.isNotEmpty(applicationQuery.getGroups())) {
                 criteriaBuilder.groups(applicationQuery.getGroups());
             }
 
+            if (StringUtils.isNotBlank(applicationQuery.getName())) {
+                criteriaBuilder.name(applicationQuery.getName());
+            }
+
+            ApplicationStatus applicationStatus = null;
             if (applicationQuery.getStatus() != null && !applicationQuery.getStatus().isBlank()) {
                 applicationStatus = ApplicationStatus.valueOf(applicationQuery.getStatus().toUpperCase());
                 criteriaBuilder.status(applicationStatus);
             }
 
-            if (applicationQuery.getName() != null && !applicationQuery.getName().isBlank()) {
-                criteriaBuilder.name(applicationQuery.getName());
+            if (CollectionUtils.isNotEmpty(applicationQuery.getIds())) {
+                criteriaBuilder.restrictedToIds(applicationQuery.getIds());
             }
-            if (applicationQuery.getUser() != null && !applicationQuery.getUser().isBlank()) {
+
+            if (StringUtils.isNotBlank(applicationQuery.getUser())) {
                 Set<String> userApplicationsIds = findUserApplicationsIds(executionContext, applicationQuery.getUser(), applicationStatus);
                 if (userApplicationsIds.isEmpty()) {
                     return null;
                 }
-                criteriaBuilder.ids(userApplicationsIds);
+                if (CollectionUtils.isNotEmpty(applicationQuery.getIds())) {
+                    criteriaBuilder.restrictedToIds(
+                        userApplicationsIds.stream().filter(applicationQuery.getIds()::contains).collect(toSet())
+                    );
+                } else {
+                    criteriaBuilder.restrictedToIds(userApplicationsIds);
+                }
             }
         }
         return criteriaBuilder.build();
