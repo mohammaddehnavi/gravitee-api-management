@@ -30,10 +30,11 @@ public class ApplicationMongoRepositoryImplTest {
     @Test
     public void buildSearchCriteria_withIdsAndNameAndEnvironmentIdsAndStatus() throws JsonProcessingException {
         ApplicationMongoRepositoryImpl repository = new ApplicationMongoRepositoryImpl();
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of("id1"))
             .name("name1")
-            .environmentIds("DEFAULT")
+            .environmentIds(Set.of("DEFAULT"))
             .status(ApplicationStatus.ACTIVE)
             .build();
         Query query = repository.buildSearchCriteria(criteria);

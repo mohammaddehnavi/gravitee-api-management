@@ -273,14 +273,16 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
                 return Collections.emptySet();
             }
 
-            ApplicationCriteria.Builder criteriaBuilder = new ApplicationCriteria.Builder().ids(new HashSet<>(applicationIds));
+            ApplicationCriteria.ApplicationCriteriaBuilder criteriaBuilder = ApplicationCriteria
+                .builder()
+                .ids(new HashSet<>(applicationIds));
 
             if (applicationStatus != null) {
                 criteriaBuilder.status(applicationStatus);
             }
 
             if (executionContext.hasEnvironmentId()) {
-                criteriaBuilder.environmentIds(executionContext.getEnvironmentId());
+                criteriaBuilder.environmentIds(Set.of(executionContext.getEnvironmentId()));
             }
 
             Page<Application> applications = applicationRepository.search(criteriaBuilder.build(), null);
@@ -1522,7 +1524,7 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
     }
 
     private ApplicationCriteria buildSearchCriteria(ExecutionContext executionContext, ApplicationQuery applicationQuery) {
-        ApplicationCriteria.Builder criteriaBuilder = new ApplicationCriteria.Builder();
+        ApplicationCriteria.ApplicationCriteriaBuilder criteriaBuilder = ApplicationCriteria.builder();
 
         if (executionContext.hasEnvironmentId()) {
             criteriaBuilder.environmentIds(Sets.newHashSet(executionContext.getEnvironmentId()));
@@ -1553,6 +1555,7 @@ public class ApplicationServiceImpl extends AbstractService implements Applicati
             if (applicationQuery.getName() != null && !applicationQuery.getName().isBlank()) {
                 criteriaBuilder.name(applicationQuery.getName());
             }
+
             if (applicationQuery.getUser() != null && !applicationQuery.getUser().isBlank()) {
                 Set<String> userApplicationsIds = findUserApplicationsIds(executionContext, applicationQuery.getUser(), applicationStatus);
                 if (userApplicationsIds.isEmpty()) {

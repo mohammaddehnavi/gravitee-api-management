@@ -318,7 +318,7 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
 
     @Test
     public void shouldSearchByName() throws Exception {
-        final Page<Application> appsPage = applicationRepository.search(new ApplicationCriteria.Builder().name("dElETed-a").build(), null);
+        final Page<Application> appsPage = applicationRepository.search(ApplicationCriteria.builder().name("dElETed-a").build(), null);
         final List<Application> apps = appsPage.getContent();
 
         assertEquals(1, apps.size());
@@ -328,7 +328,8 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
     @Test
     public void shouldSearchByNameAndIds() throws Exception {
         final Page<Application> appsPage = applicationRepository.search(
-            new ApplicationCriteria.Builder()
+            ApplicationCriteria
+                .builder()
                 .name("deleted-app")
                 .ids(Set.of("searched-app1", "app-with-long-client-id", "app-with-long-name"))
                 .build(),
@@ -349,7 +350,7 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
     @Test
     public void shouldSearchByEnvironmentIds() throws Exception {
         final Page<Application> appsPage = applicationRepository.search(
-            new ApplicationCriteria.Builder().environmentIds("DEV", "TEST", "PROD").build(),
+            ApplicationCriteria.builder().environmentIds(Set.of("DEV", "TEST", "PROD")).build(),
             null
         );
 
@@ -366,7 +367,7 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
     public void shouldSearchByEnvironmentIdsWithSort() throws Exception {
         Sortable sortable = new SortableBuilder().field("updated_at").order(Order.ASC).build();
         final Page<Application> appsPage = applicationRepository.search(
-            new ApplicationCriteria.Builder().environmentIds("DEV", "TEST", "PROD").build(),
+            ApplicationCriteria.builder().environmentIds(Set.of("DEV", "TEST", "PROD")).build(),
             null,
             sortable
         );
@@ -385,7 +386,7 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
     public void shouldSearchWithPagination() throws Exception {
         Pageable pageable = new PageableBuilder().pageSize(1).pageNumber(2).build();
         final Page<Application> appsPage = applicationRepository.search(
-            new ApplicationCriteria.Builder().environmentIds("DEV", "TEST", "PROD").build(),
+            ApplicationCriteria.builder().environmentIds(Set.of("DEV", "TEST", "PROD")).build(),
             pageable
         );
 
@@ -402,7 +403,7 @@ public class ApplicationRepositoryTest extends AbstractManagementRepositoryTest 
     @Test
     public void shouldSearchByGroups() throws Exception {
         final Page<Application> appsPage = applicationRepository.search(
-            new ApplicationCriteria.Builder().groups(Set.of("application-group")).build(),
+            ApplicationCriteria.builder().groups(Set.of("application-group")).build(),
             null
         );
 

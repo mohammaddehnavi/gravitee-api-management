@@ -88,7 +88,8 @@ public class ApplicationService_FindIdsByUserTest {
     public void should_find_ids_with_null_user() throws Exception {
         GraviteeContext.setCurrentEnvironment("envId");
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)
             .build();
@@ -110,7 +111,8 @@ public class ApplicationService_FindIdsByUserTest {
         )
             .thenReturn(Collections.singleton(APPLICATION_ID));
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of(APPLICATION_ID))
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)

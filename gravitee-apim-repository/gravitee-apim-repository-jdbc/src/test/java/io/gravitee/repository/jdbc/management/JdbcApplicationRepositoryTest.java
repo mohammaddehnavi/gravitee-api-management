@@ -31,10 +31,11 @@ public class JdbcApplicationRepositoryTest {
     public void searchQuery_idsAndNameAndEnvironmentIdsAndStatus_orderByNameAsc() {
         JdbcApplicationRepository repository = new JdbcApplicationRepository("table_prefix_");
         Sortable sortable = new SortableBuilder().field("name").order(Order.ASC).build();
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of("id1"))
             .name("name1")
-            .environmentIds("env1")
+            .environmentIds(Set.of("env1"))
             .status(ApplicationStatus.ACTIVE)
             .build();
         String query = repository.searchQuery(criteria, sortable);

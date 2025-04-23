@@ -118,7 +118,8 @@ public class ApplicationService_FindByUserTest {
         )
             .thenReturn(Collections.singleton(APPLICATION_ID));
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of(APPLICATION_ID))
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)
@@ -178,7 +179,8 @@ public class ApplicationService_FindByUserTest {
         when(roleService.findPrimaryOwnerRoleByOrganization(any(), any())).thenReturn(role);
         when(roleService.findById(any())).thenReturn(role);
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of(APPLICATION_ID))
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)
@@ -223,7 +225,8 @@ public class ApplicationService_FindByUserTest {
         )
             .thenReturn(Collections.singleton(APPLICATION_ID));
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of(APPLICATION_ID))
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)
@@ -261,7 +264,8 @@ public class ApplicationService_FindByUserTest {
         )
             .thenReturn(Collections.singleton(APPLICATION_ID));
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of(APPLICATION_ID))
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)
@@ -291,7 +295,8 @@ public class ApplicationService_FindByUserTest {
         )
             .thenReturn(Collections.singleton(APPLICATION_ID));
 
-        ApplicationCriteria criteria = new ApplicationCriteria.Builder()
+        ApplicationCriteria criteria = ApplicationCriteria
+            .builder()
             .ids(Set.of(APPLICATION_ID))
             .environmentIds(Set.of(GraviteeContext.getExecutionContext().getEnvironmentId()))
             .status(ApplicationStatus.ACTIVE)
