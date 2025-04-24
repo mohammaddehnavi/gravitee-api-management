@@ -21,6 +21,8 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.gravitee.rest.api.model.api.ApiEntity;
+import io.gravitee.rest.api.model.api.ApiEntityResult;
 import io.gravitee.rest.api.model.api.RollbackApiEntity;
 import io.gravitee.rest.api.service.ApiDuplicatorService;
 import io.gravitee.rest.api.service.AuditService;
@@ -76,5 +78,23 @@ public class ApiService_RollbackTest {
 
         verify(apiDuplicatorService, times(1))
             .updateWithImportedDefinition(GraviteeContext.getExecutionContext(), "my-api-id", "my-serialized-api");
+    }
+
+    @Test
+    public void rollback_should_rollback_emulation_engine_flag() throws JsonProcessingException {
+        RollbackApiEntity rollbackApiEntity = new RollbackApiEntity();
+        rollbackApiEntity.setId("idtest");
+        rollbackApiEntity.setName("nametest");
+        rollbackApiEntity.setDescription("descriptiontest");
+        String mapperString = "{\"id\":\"idtest\",\"name\":\"nametest\",\"description\":\"descriptiontest\"}";
+        when(objectMapper.writeValueAsString(rollbackApiEntity)).thenReturn(mapperString);
+        ApiEntity apiEntityResult = new ApiEntity();
+        apiEntityResult.setId("idtest");
+        apiEntityResult.setName("nametest");
+        apiEntityResult.setDescription("descriptiontest");
+        when(apiService.rollback(GraviteeContext.getExecutionContext(), "idtest", rollbackApiEntity)).thenReturn(apiEntityResult);
+        ApiEntity apiEntity = apiService.rollback(GraviteeContext.getExecutionContext(), "idtest", rollbackApiEntity);
+        verify(apiDuplicatorService, times(1)).updateWithImportedDefinition(GraviteeContext.getExecutionContext(), "idtest", mapperString);
+        assert apiEntity.getDescription().equals("descriptiontest");
     }
 }
