@@ -126,7 +126,6 @@ public class ApiNotificationSettingsResource extends AbstractResource {
         ) {
             throw new ForbiddenAccessException();
         }
-        config.setUser(getAuthenticatedUser());
         return portalNotificationConfigService.save(config);
     }
 
@@ -146,8 +145,9 @@ public class ApiNotificationSettingsResource extends AbstractResource {
         portalNotificationConfigEntity.setConfigType(generic.getConfigType());
         portalNotificationConfigEntity.setReferenceType(generic.getReferenceType());
         portalNotificationConfigEntity.setReferenceId(generic.getReferenceId());
-        portalNotificationConfigEntity.setUser(getAuthenticatedUser());
+        portalNotificationConfigEntity.setUser(generic.getUser());
         portalNotificationConfigEntity.setHooks(generic.getHooks());
+        portalNotificationConfigEntity.setGroups(generic.getGroups());
         return portalNotificationConfigEntity;
     }
 }

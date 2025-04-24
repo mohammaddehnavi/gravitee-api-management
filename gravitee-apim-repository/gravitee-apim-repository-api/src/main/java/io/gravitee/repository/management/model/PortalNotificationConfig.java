@@ -37,6 +37,7 @@ public class PortalNotificationConfig {
 
     private String user;
     private List<String> hooks;
+    private List<String> groups;
     private NotificationReferenceType referenceType;
     private String referenceId;
     private Date createdAt;

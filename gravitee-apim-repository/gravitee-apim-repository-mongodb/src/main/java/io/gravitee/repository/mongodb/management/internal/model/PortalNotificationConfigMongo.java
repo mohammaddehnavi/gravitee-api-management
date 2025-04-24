@@ -40,6 +40,7 @@ public class PortalNotificationConfigMongo {
     private PortalNotificationConfigPkMongo id;
 
     private List<String> hooks;
+    private List<String> groups;
     private Date createdAt;
     private Date updatedAt;
 }

@@ -16,6 +16,7 @@
 package io.gravitee.rest.api.service.impl;
 
 import io.gravitee.repository.exceptions.TechnicalException;
+import io.gravitee.repository.management.api.ApiRepository;
 import io.gravitee.repository.management.api.PortalNotificationConfigRepository;
 import io.gravitee.repository.management.model.NotificationReferenceType;
 import io.gravitee.repository.management.model.PortalNotificationConfig;
@@ -49,16 +50,21 @@ public class PortalNotificationConfigServiceImpl extends AbstractService impleme
     @Override
     public PortalNotificationConfigEntity save(PortalNotificationConfigEntity notificationEntity) {
         try {
+            String user = notificationEntity.getUser();
+            if (notificationEntity.getReferenceType().equals(NotificationReferenceType.API.name())) {
+                // TODO override with the API owner
+            }
+
             if (notificationEntity.getHooks() == null || notificationEntity.getHooks().isEmpty()) {
                 portalNotificationConfigRepository.delete(convert(notificationEntity));
                 return getDefaultEmpty(
-                    notificationEntity.getUser(),
+                    user,
                     NotificationReferenceType.valueOf(notificationEntity.getReferenceType()),
                     notificationEntity.getReferenceId()
                 );
             } else {
                 Optional<PortalNotificationConfig> optionalConfig = portalNotificationConfigRepository.findById(
-                    notificationEntity.getUser(),
+                    user,
                     NotificationReferenceType.valueOf(notificationEntity.getReferenceType()),
                     notificationEntity.getReferenceId()
                 );
@@ -149,6 +155,7 @@ public class PortalNotificationConfigServiceImpl extends AbstractService impleme
             .referenceId(entity.getReferenceId())
             .user(entity.getUser())
             .hooks(entity.getHooks())
+            .groups(entity.getGroups())
             .build();
     }
 
